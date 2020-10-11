@@ -6,6 +6,6 @@ setup(
    description='Capa de ciberseguridad sobre el paquete de Machine Learning scikit-learn',
    author='Jaime Solsona',
    author_email='j.solsonaa@alumnos.urjc.es',
-   packages=['ml-fingerprint'],
+   packages=['ml_fingerprint'],
    install_requires=['scikit-learn'],
 )
