@@ -1,31 +1,38 @@
 from ml_fingerprint import main
 import numpy as np
 from sklearn.linear_model import LinearRegression
+from Crypto.PublicKey import RSA
 
 #Test to check if the decorator works when using ml-fingerprint as a package.
-#NOTE: It requires having the ml-fingerprint installed. Therefore it's not a good test, and it should be changed in the future.
+#NOTE: It requires having the ml-fingerprint installed.
 
 #This test recreates the 2D linear regression model in VanderPlas' book, adds the decorator and tests if it has the foo() method.
 
+#Generate the RSA key used to sign and verify the model
+key = RSA.generate(2048)
+public_key = key.publickey()
 
+#Create the model
+model = LinearRegression()
 # Create some data for the regression
 rng = np.random.RandomState(1)
-
 X = rng.randn(200, 2)
 y = np.dot(X, [-2, 1]) + 0.1 * rng.randn(X.shape[0])
-
 # fit the regression model
-model = LinearRegression()
 model.fit(X, y)
-
 # create some new points to predict
 X2 = rng.randn(100, 2)
-
 # predict the labels
 y2 = model.predict(X2)
 
-#Adding the foo method
+#Adding the verification methods to the BaseEstimator class
 main.decorate_base_estimator()
 
 #Checking if it works
-model.foo()
+model.hello_world()
+
+#Signing the model after it has been trained
+model.sign(key)
+
+#Verifying the model
+model.verify(public_key)
