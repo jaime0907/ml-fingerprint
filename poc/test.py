@@ -2,7 +2,7 @@ from ml_fingerprint import main
 import numpy as np
 from sklearn.linear_model import LinearRegression
 
-#Test to check if the decorator works when using ml-fingerprint as a package. It works!
+#Test to check if the decorator works when using ml-fingerprint as a package.
 #NOTE: It requires having the ml-fingerprint installed. Therefore it's not a good test, and it should be changed in the future.
 
 #This test recreates the 2D linear regression model in VanderPlas' book, adds the decorator and tests if it has the foo() method.
