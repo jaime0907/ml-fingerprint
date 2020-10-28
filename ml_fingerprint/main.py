@@ -4,6 +4,7 @@ import pickle
 from Crypto.PublicKey import RSA
 from Crypto.Hash import SHA256
 from Crypto.Signature import pkcs1_15
+from copy import deepcopy
 
 #Function taken from Michael Garod
 #This function is used by decorate_base_estimator to add a method to an existing class without having to modify said class' source code (maybe this function should be private?)
@@ -20,6 +21,7 @@ def add_method(cls):
 #This function should be called by the user on their code. It adds the foo() method to scikit's BaseEstimator class, making foo() avaliable in all scikit's estimators.
 def decorate_base_estimator():
     baseClass = base.BaseEstimator
+
     @add_method(baseClass) #Adding foo method to scikit's BaseEstimator class.
     def hello_world():
         print('Hello world!')
@@ -27,17 +29,27 @@ def decorate_base_estimator():
     #Takes a RSA key and signs the serialized model with it.
     def sign(self, key):
         print("Signing model...")
-        serialized_model = pickle.dumps(self)
+        # Make a copy of the model and delete the signature so the signature doesn't affect the hash.
+        # This is necessary because when adding the signature we are modifying the model, so the hash done when verifying won't be the same as the one used to sign the model.
+        modelcopy = deepcopy(self)
+        modelcopy.signature = ""
+
+        # Double dump/load/dump because if the model is dumped and loaded, a second dump of that loaded model won't be equal to the first one.
+        # However, third dumps and onwards will be equal to the second one.
+        serialized_model = pickle.dumps(pickle.loads(pickle.dumps(modelcopy)))
         hashed_model = SHA256.new(serialized_model)
         signature = pkcs1_15.new(key).sign(hashed_model)
-        setattr(self.__class__, "signature", signature) #Sets the signature as an attribute for the model
+        self.signature = signature
         return self.signature
     #Manually add the sign() method, because it need access to self
     setattr(baseClass, sign.__name__, sign)
 
     def verify(self, public_key):
         print("Validating model...")
-        serialized_model = pickle.dumps(self)
+        # Make a copy of the model and delete the signature so the hash fits the one generated in sign()
+        modelcopy = deepcopy(self)
+        modelcopy.signature = ""
+        serialized_model = pickle.dumps(pickle.loads(pickle.dumps(modelcopy)))
         hashed_model = SHA256.new(serialized_model)
         try:
             pkcs1_15.new(public_key).verify(hashed_model, self.signature)
@@ -48,3 +60,11 @@ def decorate_base_estimator():
             print("This model has not been signed.")
     #Manually add the verify() method, because it need access to self
     setattr(baseClass, verify.__name__, verify)
+
+    def inyection_verify(self):
+        return True
+    setattr(baseClass, inyection_verify.__name__, inyection_verify)
+
+#Function used to check if a scikit model has been inyected with ml-fingerprint methods
+def isInyected(model):
+    return bool(getattr(model, 'sign', False))

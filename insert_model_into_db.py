@@ -2,16 +2,18 @@ from ml_fingerprint import main
 import numpy as np
 from sklearn.linear_model import LinearRegression
 from Crypto.PublicKey import RSA
+import sqlite3
 import pickle
 
-#Test to check if the decorator works when using ml-fingerprint as a package.
-#NOTE: It requires having the ml-fingerprint installed.
 
-#This test recreates the 2D linear regression model in VanderPlas' book, adds the decorator and tests if it has the foo() method.
-
-#Generate the RSA key used to sign and verify the model
-key = RSA.generate(2048)
-public_key = key.publickey()
+#Get the key from the database
+database = 'ml_fingerprint_database.db'
+conn = sqlite3.connect(database)
+conn.row_factory = sqlite3.Row
+c = conn.cursor()
+db_key = c.execute('select * from key order by id desc limit 1').fetchone()
+key = RSA.import_key(db_key['privatekey'])
+public_key = RSA.import_key(db_key['publickey'])
 
 #Create the model
 model = LinearRegression()
@@ -26,15 +28,22 @@ X2 = rng.randn(100, 2)
 # predict the labels
 y2 = model.predict(X2)
 
+print(main.isInyected(model))
 
 #Adding the verification methods to the BaseEstimator class
 main.decorate_base_estimator()
 
-#Checking if it works
-model.hello_world()
-
 #Signing the model after it has been trained
 model.sign(key)
 
-#Verifying the model
-model.verify(public_key)
+
+#Serialize model
+serialized_model = pickle.dumps(model)
+
+#Insert the serialized model into the DB
+modelname = 'example_unaltered'
+c.execute('insert into models (name, model) values (?,?)', (modelname, serialized_model))
+conn.commit()
+conn.close()
+
+

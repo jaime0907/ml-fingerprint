@@ -1,0 +1,14 @@
+First we need to export the enviroment variable FLASK_APP. While being on the root repository directory, execute:
+
+UNIX:
+export FLASK_APP=flask/server.py
+
+Windows CMD:
+set FLASK_APP=flask/server.py
+
+Windows PowerShell:
+$env:FLASK_APP = "flask/server.py"
+
+Then, just execute:
+
+flask run

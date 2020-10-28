@@ -2,6 +2,7 @@ from ml_fingerprint import main
 import numpy as np
 from sklearn.linear_model import LinearRegression
 from Crypto.PublicKey import RSA
+import pickle
 
 #Test to check if the decorator works when using ml-fingerprint as a package.
 #NOTE: It requires having the ml-fingerprint installed.
@@ -15,6 +16,8 @@ public_key = key.publickey()
 #Create the model
 model = LinearRegression()
 
+#Adding the verification methods to the BaseEstimator class
+main.decorate_base_estimator()
 #Signing the model BEFORE it has been trained
 model.sign(key)
 
@@ -29,11 +32,10 @@ X2 = rng.randn(100, 2)
 # predict the labels
 y2 = model.predict(X2)
 
-#Adding the verification methods to the BaseEstimator class
-main.decorate_base_estimator()
-
 #Checking if it works
 model.hello_world()
 
 #Verifying the model (that has been signed before training, and therefore, should not verify)
 model.verify(public_key)
+
+
