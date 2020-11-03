@@ -4,6 +4,7 @@ from sklearn.linear_model import LinearRegression
 from Crypto.PublicKey import RSA
 import sqlite3
 import pickle
+import joblib
 
 
 #Get the key from the database
@@ -37,12 +38,18 @@ main.decorate_base_estimator()
 model.sign(key)
 
 
-#Serialize model
-serialized_model = pickle.dumps(model)
 
 #Insert the serialized model into the DB
+c.execute('delete from models')
+
+#Serialize model with pickle
+serialized_model = pickle.dumps(model)
 modelname = 'example_unaltered'
 c.execute('insert into models (name, model) values (?,?)', (modelname, serialized_model))
+
+#Serialize model with joblib
+serialized_model = joblib.dump(model, 'model.joblib')
+
 conn.commit()
 conn.close()
 
