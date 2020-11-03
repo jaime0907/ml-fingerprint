@@ -7,5 +7,5 @@ setup(
    author='Jaime Solsona',
    author_email='j.solsonaa@alumnos.urjc.es',
    packages=['ml_fingerprint'],
-   install_requires=['scikit-learn'],
+   install_requires=['scikit-learn', 'ujson'],
 )

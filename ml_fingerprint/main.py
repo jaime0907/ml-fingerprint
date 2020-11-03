@@ -1,13 +1,13 @@
 from sklearn import base
 from functools import wraps # This convenience func preserves name and docstring
-import pickle
+import orjson
 from Crypto.PublicKey import RSA
 from Crypto.Hash import SHA256
 from Crypto.Signature import pkcs1_15
 from copy import deepcopy
 
-#Function taken from Michael Garod
-#This function is used by decorate_base_estimator to add a method to an existing class without having to modify said class' source code (maybe this function should be private?)
+# Function taken from Michael Garod
+# This function is used by decorate_base_estimator to add a method to an existing class without having to modify said class' source code (maybe this function should be private?)
 def add_method(cls):
     def decorator(func):
         @wraps(func) 
@@ -22,35 +22,47 @@ def add_method(cls):
 def decorate_base_estimator():
     baseClass = base.BaseEstimator
 
-    @add_method(baseClass) #Adding foo method to scikit's BaseEstimator class.
+    @add_method(baseClass) # Adding foo method to scikit's BaseEstimator class.
     def hello_world():
         print('Hello world!')
 
-    #Takes a RSA key and signs the serialized model with it.
-    def sign(self, key):
+    # Takes a RSA key and signs the serialized model with it.
+    def sign(self, private_key):
         print("Signing model...")
         # Make a copy of the model and delete the signature so the signature doesn't affect the hash.
         # This is necessary because when adding the signature we are modifying the model, so the hash done when verifying won't be the same as the one used to sign the model.
         modelcopy = deepcopy(self)
-        modelcopy.signature = ""
+        if hasattr(modelcopy, 'signature'):
+            del modelcopy.signature
 
-        # Double dump/load/dump because if the model is dumped and loaded, a second dump of that loaded model won't be equal to the first one.
-        # However, third dumps and onwards will be equal to the second one.
-        serialized_model = pickle.dumps(pickle.loads(pickle.dumps(modelcopy)))
+        # Serializes the model parameters using orjson, which provides native numpy compatibility
+        serialized_model = orjson.dumps(modelcopy.__dict__, option=orjson.OPT_SERIALIZE_NUMPY)
+
+        # Hashes the serialized model using SHA256 algorithm
         hashed_model = SHA256.new(serialized_model)
-        signature = pkcs1_15.new(key).sign(hashed_model)
+
+        # Signs the hashed model with the provided private key and then adds the signature to the model object
+        signature = pkcs1_15.new(private_key).sign(hashed_model)
         self.signature = signature
         return self.signature
-    #Manually add the sign() method, because it need access to self
+
+    # Manually add the sign() method, because it need access to self
     setattr(baseClass, sign.__name__, sign)
 
     def verify(self, public_key):
         print("Validating model...")
         # Make a copy of the model and delete the signature so the hash fits the one generated in sign()
         modelcopy = deepcopy(self)
-        modelcopy.signature = ""
-        serialized_model = pickle.dumps(pickle.loads(pickle.dumps(modelcopy)))
+        if hasattr(modelcopy, 'signature'):
+            del modelcopy.signature
+
+        # Serializes the model parameters using orjson, which provides native numpy compatibility
+        serialized_model = orjson.dumps(modelcopy.__dict__, option=orjson.OPT_SERIALIZE_NUMPY)
+
+        # Hashes the serialized model using SHA256 algorithm
         hashed_model = SHA256.new(serialized_model)
+
+        # Tries to verify the model with its signature and the public key provided.
         try:
             pkcs1_15.new(public_key).verify(hashed_model, self.signature)
             print("The signature is valid")
@@ -58,13 +70,14 @@ def decorate_base_estimator():
             print("The signature is NOT valid.")
         except AttributeError:
             print("This model has not been signed.")
-    #Manually add the verify() method, because it need access to self
+
+    # Manually add the verify() method, because it need access to self
     setattr(baseClass, verify.__name__, verify)
 
     def inyection_verify(self):
         return True
     setattr(baseClass, inyection_verify.__name__, inyection_verify)
 
-#Function used to check if a scikit model has been inyected with ml-fingerprint methods
+# Function used to check if a scikit model has been inyected with ml-fingerprint methods
 def isInyected(model):
     return bool(getattr(model, 'sign', False))

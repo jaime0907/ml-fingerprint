@@ -4,6 +4,7 @@ from Crypto.PublicKey import RSA
 import sqlite3
 import pickle
 import requests as req
+import joblib
 
 #Get the key from the database
 database = 'ml_fingerprint_database.db'
@@ -26,3 +27,10 @@ else:
         model.verify(public_key)
     else:
         print(model.coef_)
+
+
+model = joblib.load('model.joblib')
+if main.isInyected(model):
+    model.verify(public_key)
+else:
+    print(model.coef_)
