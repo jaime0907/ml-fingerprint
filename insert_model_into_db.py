@@ -5,6 +5,7 @@ from Crypto.PublicKey import RSA
 import sqlite3
 import pickle
 import joblib
+from poc import example_models
 
 
 #Get the key from the database
@@ -16,18 +17,7 @@ db_key = c.execute('select * from key order by id desc limit 1').fetchone()
 key = RSA.import_key(db_key['privatekey'])
 public_key = RSA.import_key(db_key['publickey'])
 
-#Create the model
-model = LinearRegression()
-# Create some data for the regression
-rng = np.random.RandomState(1)
-X = rng.randn(200, 2)
-y = np.dot(X, [-2, 1]) + 0.1 * rng.randn(X.shape[0])
-# fit the regression model
-model.fit(X, y)
-# create some new points to predict
-X2 = rng.randn(100, 2)
-# predict the labels
-y2 = model.predict(X2)
+model = example_models.vanderplas_regression()
 
 print(main.isInyected(model))
 

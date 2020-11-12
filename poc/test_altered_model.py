@@ -3,39 +3,32 @@ import numpy as np
 from sklearn.linear_model import LinearRegression
 from Crypto.PublicKey import RSA
 import pickle
+import example_models
 
-#Test to check if the decorator works when using ml-fingerprint as a package.
-#NOTE: It requires having the ml-fingerprint installed.
+# Test to check if the decorator works when using ml-fingerprint as a package.
+# NOTE: It requires having the ml-fingerprint installed.
 
-#This test recreates the 2D linear regression model in VanderPlas' book, adds the decorator and tests if it has the foo() method.
+# This test gets a model, adds the fingerprint methods, signs the model, MODIFIES IT and then tries to verify it.
 
-#Generate the RSA key used to sign and verify the model
+# Generate the RSA key used to sign and verify the model
 key = RSA.generate(2048)
 public_key = key.publickey()
 
-#Create the model
-model = LinearRegression()
+# Get a model from the example_models.py file
+model = example_models.vanderplas_regression()
 
-#Adding the verification methods to the BaseEstimator class
+# Adding the verification methods to the BaseEstimator class
 main.decorate_base_estimator()
-#Signing the model BEFORE it has been trained
+# Signing the model BEFORE it has been trained
 model.sign(key)
 
-# Create some data for the regression
-rng = np.random.RandomState(1)
-X = rng.randn(200, 2)
-y = np.dot(X, [-2, 1]) + 0.1 * rng.randn(X.shape[0])
-# fit the regression model
-model.fit(X, y)
-# create some new points to predict
-X2 = rng.randn(100, 2)
-# predict the labels
-y2 = model.predict(X2)
+# Modifying the model
+model.__dict__['coef_'][0] = -4.0
 
-#Checking if it works
+# Checking if it works
 model.hello_world()
 
-#Verifying the model (that has been signed before training, and therefore, should not verify)
+# Verifying the model (that has been signed before training, and therefore, should not verify)
 model.verify(public_key)
 
 
