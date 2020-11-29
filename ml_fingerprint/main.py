@@ -66,17 +66,14 @@ def decorate_base_estimator():
         try:
             pkcs1_15.new(public_key).verify(hashed_model, self.signature)
             print("The signature is valid")
+            return True
         except (ValueError, TypeError):
-            print("The signature is NOT valid.")
+            raise Exception("The signature is NOT valid.")
         except AttributeError:
-            print("This model has not been signed.")
+            raise Exception("This model has not been signed.")
 
     # Manually add the verify() method, because it need access to self
     setattr(baseClass, verify.__name__, verify)
-
-    def inyection_verify(self):
-        return True
-    setattr(baseClass, inyection_verify.__name__, inyection_verify)
 
 # Function used to check if a scikit model has been inyected with ml-fingerprint methods
 def isInyected(model):
