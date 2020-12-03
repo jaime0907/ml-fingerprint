@@ -18,16 +18,26 @@ def add_method(cls):
         return func # returning func means func can still be used normally
     return decorator
 
-#This function should be called by the user on their code. It adds the foo() method to scikit's BaseEstimator class, making foo() avaliable in all scikit's estimators.
 def decorate_base_estimator():
+    '''
+    This function should be called by the user on their code.
+    It adds the sign and verification methods to scikit's BaseEstimator class, making them avaliable in all scikit's estimators.
+    '''
     baseClass = base.BaseEstimator
 
     @add_method(baseClass) # Adding foo method to scikit's BaseEstimator class.
     def hello_world():
         print('Hello world!')
 
-    # Takes a RSA key and signs the serialized model with it.
     def sign(self, private_key):
+        '''
+        Takes a RSA private key and signs the model with it.
+
+        Parameters
+        ----------
+        private_key : Crypto.PublicKey.RSA.RsaKey
+            The private key you want to sign the model with.
+        '''
         print("Signing model...")
         # Make a copy of the model and delete the signature so the signature doesn't affect the hash.
         # This is necessary because when adding the signature we are modifying the model, so the hash done when verifying won't be the same as the one used to sign the model.
@@ -50,6 +60,14 @@ def decorate_base_estimator():
     setattr(baseClass, sign.__name__, sign)
 
     def verify(self, public_key):
+        '''
+        Takes a RSA public key and verifies the model with it.
+
+        Parameters
+        ----------
+        public_key : Crypto.PublicKey.RSA.RsaKey
+            The public key you want to verify the model with.
+        '''
         print("Validating model...")
         # Make a copy of the model and delete the signature so the hash fits the one generated in sign()
         modelcopy = deepcopy(self)
@@ -75,6 +93,19 @@ def decorate_base_estimator():
     # Manually add the verify() method, because it need access to self
     setattr(baseClass, verify.__name__, verify)
 
-# Function used to check if a scikit model has been inyected with ml-fingerprint methods
 def isInyected(model):
+    '''
+    Function used to check if a scikit model has been inyected with ml-fingerprint methods
+
+    Parameters
+    ----------
+    model : any sklearn estimator
+        The scikit-learn model you want to check if is inyected with sign() and verify() methods.
+
+    Returns
+    -------
+    bool
+        True if the model has been previously inyected, False otherwise.
+
+    '''
     return bool(getattr(model, 'sign', False))
