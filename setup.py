@@ -3,9 +3,9 @@ from setuptools import setup
 setup(
    name='ml-fingerprint',
    version='0',
-   description='Capa de ciberseguridad sobre el paquete de Machine Learning scikit-learn',
+   description='Add an integrity and authenticity verification layer for all scikit-learn models.',
    author='Jaime Solsona',
    author_email='j.solsonaa@alumnos.urjc.es',
    packages=['ml_fingerprint'],
-   install_requires=['scikit-learn', 'ujson'],
+   install_requires=['scikit-learn', 'orjson', 'pycryptodome', 'pandas'],
 )

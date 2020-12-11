@@ -4,7 +4,7 @@ from sklearn.linear_model import LinearRegression
 from Crypto.PublicKey import RSA
 import pickle
 import example_models
-
+import orjson
 # Tests to check if the decorator works when using ml-fingerprint as a package.
 # NOTE: It requires having the ml-fingerprint installed.
 
@@ -40,7 +40,10 @@ def altered_test(model, key):
         model.__dict__['dual_coef_'][0][0] = -4.0
     elif type(model).__name__ == 'LinearRegression':
         model.__dict__['coef_'][0] = -4.0
+    elif type(model).__name__ == 'LogisticRegression':
+        model.__dict__['coef_'][0] = -4.0
     else:
+        print(model.__dict__)
         print("altered_test() failed. The given model isn't compatible with this test.")
         return
 
@@ -72,11 +75,13 @@ def main_function():
     key = RSA.generate(2048)
 
     # Get a model from the example_models.py file
-    model = example_models.vanderplas_regression()
+    #model = example_models.vanderplas_regression()
+    model, score = example_models.rain_classifier()
     ### model = example_models.vanderplas_classifier()
 
     # Do all the tests
-    unsigned_test(model, key)
+    
+    #unsigned_test(model, key)
     unaltered_test(model, key)
     altered_test(model, key)
     
