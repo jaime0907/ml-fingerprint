@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, render_template, send_from_directory
 import sqlite3
 import os
 import json
@@ -10,7 +10,11 @@ def get_db_connection():
     conn.row_factory = sqlite3.Row
     return conn
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='assets')
+
+@app.route('/', methods=['GET'])
+def main_page():
+    return render_template('index.html')
 
 @app.route('/model/<modelname>', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def manage_model(modelname):
