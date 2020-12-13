@@ -5,6 +5,7 @@ from Crypto.PublicKey import RSA
 from Crypto.Hash import SHA256
 from Crypto.Signature import pkcs1_15
 from copy import deepcopy
+from . import exceptions
 
 # Function taken from Michael Garod
 # This function is used by decorate_base_estimator to add a method to an existing class without having to modify said class' source code (maybe this function should be private?)
@@ -37,6 +38,11 @@ def decorate_base_estimator():
         ----------
         private_key : Crypto.PublicKey.RSA.RsaKey
             The private key you want to sign the model with.
+        
+        Returns
+        -------
+        bytes
+            The signature of the model.
         '''
         print("Signing model...")
 
@@ -82,11 +88,17 @@ def decorate_base_estimator():
         ----------
         public_key : Crypto.PublicKey.RSA.RsaKey
             The public key you want to verify the model with.
+        
+        Returns
+        -------
+        bool
+            True if verification succeded. If not, it will raise and exception
+            depending on the cause of the fail.
         '''
         print("Validating model...")
 
         if not hasattr(self, 'ml_fingerprint_data'):
-            raise Exception("This model has not been signed.")
+            raise exceptions.ModelNotSigned("This model has not been signed.")
 
         # Make a copy of the model and delete ml-fingerprint data so the hash fits the one generated in sign()
         modelcopy = deepcopy(self)
@@ -109,9 +121,9 @@ def decorate_base_estimator():
             print("The signature is valid")
             return True
         except (ValueError, TypeError):
-            raise Exception("The signature is NOT valid.")
+            raise exceptions.VerificationError("The signature is NOT valid.")
         except AttributeError:
-            raise Exception("This model has not been signed.")
+            raise exceptions.ModelNotSigned("This model has not been signed.")
 
     # Manually add the verify() method, because it need access to self
     setattr(baseClass, verify.__name__, verify)

@@ -11,6 +11,17 @@ import pandas as pd
 
 
 def vanderplas_regression():
+    """
+    Example linear regressor taken from "Python Data Science Handbook", by Jake VanderPlas.
+    The training points follow the function y = -2x + z, with an added noise.
+    The regressor then tries to predict the value of y based on x and z values.
+
+    Returns
+    -------
+    sklearn.linear_model.LinearRegression
+        The linear regressor model described above.
+    """
+
     #Create the model
     model = LinearRegression()
     # Create some data for the regression
@@ -27,6 +38,18 @@ def vanderplas_regression():
     return model
 
 def vanderplas_classifier():
+    """
+    Example classifier taken from "Python Data Science Handbook", by Jake VanderPlas.
+    The training points are taken from scikit-learn make_blobs function, which generates
+    points around N center points, in this case N=2 centers.
+    The classifier then tries to predict if a points belongs to one center or the other.
+
+    Returns
+    -------
+    sklearn.svm.SVC
+        The C-Support Vector Classification (SVC) model described above.
+    """
+
     # create 50 separable points
     X, y = make_blobs(n_samples=50, centers=2,
                     random_state=0, cluster_std=0.60)
