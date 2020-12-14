@@ -28,6 +28,14 @@ ml\_fingerprint.ml\_fingerprint module
    :undoc-members:
    :show-inheritance:
 
+ml\_fingerprint.remote module
+-----------------------------
+
+.. automodule:: ml_fingerprint.remote
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Module contents
 ---------------
 

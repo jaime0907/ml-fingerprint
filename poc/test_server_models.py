@@ -1,11 +1,10 @@
-from ml_fingerprint import main
+from ml_fingerprint import ml_fingerprint, example_models
 from Crypto.PublicKey import RSA
 import sqlite3
 import pickle
 import requests as req
 import json
 import base64
-import example_models
 
 url = 'http://localhost:5000/'
 
@@ -47,7 +46,7 @@ def get_model(modelname, public_key, version=None):
         data = res.json()
         pickled_model = base64.b64decode(data['serialized_model'])
         model = pickle.loads(pickled_model)
-        if main.isInyected(model):
+        if ml_fingerprint.isInyected(model):
             signIsGood = model.verify(public_key)
             if signIsGood:
                 return model
@@ -101,7 +100,7 @@ def main_function():
     private_key = RSA.import_key(db_key['privatekey'])
 
     # Decorate BaseEstimator
-    main.decorate_base_estimator()
+    ml_fingerprint.decorate_base_estimator()
 
     modelname = 'example_regression'
     model = example_models.vanderplas_regression()

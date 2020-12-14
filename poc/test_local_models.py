@@ -1,9 +1,8 @@
-from ml_fingerprint import main
+from ml_fingerprint import ml_fingerprint, example_models
 import numpy as np
 from sklearn.linear_model import LinearRegression
 from Crypto.PublicKey import RSA
 import pickle
-import example_models
 import orjson
 # Tests to check if the decorator works when using ml-fingerprint as a package.
 # NOTE: It requires having the ml-fingerprint installed.
@@ -13,10 +12,7 @@ def unaltered_test(model, key):
     print("Starting unaltered test...")
 
     # Adding the verification methods to the BaseEstimator class
-    main.decorate_base_estimator()
-
-    # Checking if it works
-    model.hello_world()
+    ml_fingerprint.decorate_base_estimator()
 
     # Signing the model after it has been trained
     model.sign(key)
@@ -31,7 +27,7 @@ def altered_test(model, key):
     print("Starting altered test...")
 
     # Adding the verification methods to the BaseEstimator class
-    main.decorate_base_estimator()
+    ml_fingerprint.decorate_base_estimator()
     # Signing the model BEFORE it has been trained
     model.sign(key)
 
@@ -47,9 +43,6 @@ def altered_test(model, key):
         print("altered_test() failed. The given model isn't compatible with this test.")
         return
 
-    # Checking if it works
-    model.hello_world()
-
     # Verifying the model (that has been signed before training, and therefore, should not verify)
     model.verify(key.publickey())
     print()
@@ -59,10 +52,7 @@ def unsigned_test(model, key):
     print("Starting unsigned test...")
 
     # Adding the verification methods to the BaseEstimator class
-    main.decorate_base_estimator()
-
-    # Checking if it works
-    model.hello_world()
+    ml_fingerprint.decorate_base_estimator()
 
     # Verifying the model
     model.verify(key.publickey())
