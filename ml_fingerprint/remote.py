@@ -96,7 +96,7 @@ class RemoteServer():
         version_text = ""
         if version != None:
             version_text = "?version=" + version
-        res = req.get(self.url + '/model/' + modelname + version_text)
+        res = req.get(self.url + 'model/' + modelname + version_text)
         if res.status_code != 200:
             print(res.text)
         else:
@@ -186,7 +186,7 @@ class RemoteServer():
         version_text = ""
         if version != None:
             version_text = "?version=" + version
-        res = req.delete(self.url + '/model/' + modelname + version_text)
+        res = req.delete(self.url + 'model/' + modelname + version_text)
         print(res.text)
 
 

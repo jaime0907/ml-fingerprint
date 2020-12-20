@@ -1,4 +1,4 @@
-from ml_fingerprint import ml_fingerprint, example_models
+from ml_fingerprint import ml_fingerprint, example_models, remote
 from Crypto.PublicKey import RSA
 import sqlite3
 import pickle
@@ -113,6 +113,32 @@ def main_function():
     print(server_model.coef_)
     delete_model(modelname)
 
+def main2():
+    # Get the key from the database
+    database = 'ml_fingerprint_database.db'
+    conn = sqlite3.connect(database)
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+    db_key = c.execute('select * from key order by id desc limit 1').fetchone()
+    public_key = RSA.import_key(db_key['publickey'])
+    private_key = RSA.import_key(db_key['privatekey'])
+
+    # Decorate BaseEstimator
+    ml_fingerprint.decorate_base_estimator()
+
+    modelname = 'example_regression'
+    model = example_models.vanderplas_regression()
+    model.sign(private_key)
+
+    rem = remote.RemoteServer(url)
+
+    rem.insert_model(model, modelname, True, "regression", {"MSE":0.987}, "1.2.78", {"parameter_X":"TEST"})
+    
+    #update_model(model, "example_regression", True, "regression", {"MSE":0.987}, "1.2.78", {"parameter_X":"TEST"})
+    server_model = rem.get_model(modelname, public_key)
+    print(server_model.coef_)
+    rem.delete_model(modelname)
+
 
 if __name__ == '__main__':
-    main_function()
+    main2()

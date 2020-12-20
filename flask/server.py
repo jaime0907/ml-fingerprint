@@ -2,6 +2,8 @@ from flask import Flask, request, render_template, send_from_directory
 import sqlite3
 import os
 import json
+from flask_kerberos import requires_authentication, init_kerberos
+
 
 database = os.path.join(os.getcwd(), 'ml_fingerprint_database.db')
 
@@ -13,6 +15,7 @@ def get_db_connection():
 app = Flask(__name__, static_folder='assets')
 
 @app.route('/', methods=['GET'])
+@requires_authentication
 def main_page():
     return render_template('index.html')
 
@@ -48,7 +51,7 @@ def get_model(modelname):
                         'supervised': model['supervised'],
                         'type': model['type'],
                         'estimator': model['estimator'],
-                        'coefficients': json.loads(model['coefficients']),
+                        'scores': json.loads(model['scores']),
                         'version': model['version'],
                         'metadata': json.loads(model['metadata'])}
         json_response = json.dumps(dict_response, indent=4)
@@ -69,7 +72,7 @@ def upload_model(modelname):
         if body['supervised'] == "true":
             supervised = 1
         
-        c.execute('insert into models (name, serialized_model, serializer_bytes, serializer_text, supervised, type, estimator, coefficients, version, metadata) values (:name, :serialized_model, :serializer_bytes, :serializer_text, :supervised, :type, :estimator, :coefficients, :version, :metadata)',
+        c.execute('insert into models (name, serialized_model, serializer_bytes, serializer_text, supervised, type, estimator, scores, version, metadata) values (:name, :serialized_model, :serializer_bytes, :serializer_text, :supervised, :type, :estimator, :scores, :version, :metadata)',
             {'name': modelname,
             'serialized_model': body['serialized_model'],
             'serializer_bytes': body['serializer_bytes'],
@@ -77,7 +80,7 @@ def upload_model(modelname):
             'supervised': supervised,
             'type': body['type'],
             'estimator': body['estimator'],
-            'coefficients': json.dumps(body['coefficients']),
+            'scores': json.dumps(body['scores']),
             'version': body['version'],
             'metadata': json.dumps(body['metadata'])
             })
@@ -99,14 +102,14 @@ def update_model(modelname):
         if body['supervised'] == "true":
             supervised = 1
 
-        c.execute('update models set serialized_model = :serialized_model, serializer_bytes = :serializer_bytes, serializer_text = :serializer_text, supervised = :supervised, type = :type, estimator = :estimator, coefficients = :coefficients, metadata = :metadata where id = :id',
+        c.execute('update models set serialized_model = :serialized_model, serializer_bytes = :serializer_bytes, serializer_text = :serializer_text, supervised = :supervised, type = :type, estimator = :estimator, scores = :scores, metadata = :metadata where id = :id',
             {'serialized_model': body['serialized_model'],
             'serializer_bytes': body['serializer_bytes'],
             'serializer_text': body['serializer_text'],
             'supervised': supervised,
             'type': body['type'],
             'estimator': body['estimator'],
-            'coefficients': json.dumps(body['coefficients']),
+            'scores': json.dumps(body['scores']),
             'version': body['version'],
             'metadata': json.dumps(body['metadata']),
             'id': model['id']
@@ -193,7 +196,7 @@ def get_modellist(modelname=None):
                         'supervised': model['supervised'],
                         'type': model['type'],
                         'estimator': model['estimator'],
-                        'coefficients': json.loads(model['coefficients']),
+                        'scores': json.loads(model['scores']),
                         'version': model['version'],
                         'metadata': json.loads(model['metadata'])}
         model_list.append(dict_response)
@@ -201,3 +204,6 @@ def get_modellist(modelname=None):
     json_list = json.dumps(model_list, indent=4)
     return (json_list, {'Content-Type': 'application/json'})
 
+if __name__ == '__main__':
+    init_kerberos(app, hostname='EXAMPLE.COM')
+    app.run(debug=True, host='0.0.0.0')

@@ -1,0 +1,27 @@
+FROM ubuntu
+
+LABEL maintainer="j.solsonaa@alumnos.urjc.es"
+
+ARG DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update -y && \
+    apt-get install -y python3-pip python3-dev
+RUN apt-get install -y libkrb5-dev
+RUN apt-get install -y krb5-user
+
+# We copy just the requirements.txt first to leverage Docker cache
+COPY ./requirements.txt /flask/requirements.txt
+
+COPY ./krb5.conf /etc/krb5.conf
+
+WORKDIR /flask
+
+RUN pip3 install -r requirements.txt
+
+COPY . /flask
+
+ENV KRB5_KTNAME=/flask/jaime.keytab
+
+ENTRYPOINT [ "python3" ]
+
+CMD [ "server.py" ]
