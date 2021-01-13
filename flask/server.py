@@ -2,7 +2,8 @@ from flask import Flask, request, render_template, send_from_directory
 import sqlite3
 import os
 import json
-from flask_kerberos import requires_authentication, init_kerberos
+from datetime import datetime
+#from flask_kerberos import requires_authentication, init_kerberos
 
 
 database = os.path.join(os.getcwd(), 'ml_fingerprint_database.db')
@@ -15,7 +16,7 @@ def get_db_connection():
 app = Flask(__name__, static_folder='assets')
 
 @app.route('/', methods=['GET'])
-@requires_authentication
+#@requires_authentication
 def main_page():
     return render_template('index.html')
 
@@ -42,19 +43,13 @@ def get_model(modelname):
         model = c.execute('select * from models where name = ? and version = ?', (modelname,version)).fetchone()
     else:
         model = c.execute('select * from models where name = ? order by version desc', (modelname,)).fetchone()
-
+    
     if model != None:
-        dict_response = {'name': model['name'],
-                        'serialized_model': model['serialized_model'],
-                        'serializer_bytes': model['serializer_bytes'],
-                        'serializer_text': model['serializer_text'],
-                        'supervised': model['supervised'],
-                        'type': model['type'],
-                        'estimator': model['estimator'],
-                        'scores': json.loads(model['scores']),
-                        'version': model['version'],
-                        'metadata': json.loads(model['metadata'])}
-        json_response = json.dumps(dict_response, indent=4)
+        model_dict = dict(model)
+        model_dict['scores'] = json.loads(model['scores'])
+        model_dict['metadata'] = json.loads(model['metadata'])
+
+        json_response = json.dumps(model_dict, indent=4)
         return (json_response, {'Content-Type': 'application/json'})
     else:
         return ("The selected model doesn't exist.", 400)
@@ -68,22 +63,17 @@ def upload_model(modelname):
     model = c.execute('select * from models where name = ? and version = ?', (modelname,body['version'])).fetchone()
 
     if model == None:
-        supervised = 0
+        model_dict = dict(body)
+        model_dict['supervised'] = 0
         if body['supervised'] == "true":
-            supervised = 1
+            model_dict['supervised'] = 1
+
+        model_dict['scores'] = json.dumps(body['scores'])
+        model_dict['metadata'] = json.dumps(body['metadata'])
+        model_dict['name'] = modelname
         
-        c.execute('insert into models (name, serialized_model, serializer_bytes, serializer_text, supervised, type, estimator, scores, version, metadata) values (:name, :serialized_model, :serializer_bytes, :serializer_text, :supervised, :type, :estimator, :scores, :version, :metadata)',
-            {'name': modelname,
-            'serialized_model': body['serialized_model'],
-            'serializer_bytes': body['serializer_bytes'],
-            'serializer_text': body['serializer_text'],
-            'supervised': supervised,
-            'type': body['type'],
-            'estimator': body['estimator'],
-            'scores': json.dumps(body['scores']),
-            'version': body['version'],
-            'metadata': json.dumps(body['metadata'])
-            })
+        c.execute('insert into models (name, serialized_model, serializer_bytes, serializer_text, supervised, type, estimator, scores, version, metadata, date, description, owner) values (:name, :serialized_model, :serializer_bytes, :serializer_text, :supervised, :type, :estimator, :scores, :version, :metadata, :date, :description, :owner)',
+            model_dict)
 
         conn.commit()
         return "The model has been successfully inserted into the database.", 200
@@ -98,22 +88,17 @@ def update_model(modelname):
 
     model = c.execute('select * from models where name = ? and version = ?', (modelname,body['version'])).fetchone()
     if model != None:
-        supervised = 0
+        model_dict = dict(body)
+        model_dict['supervised'] = 0
         if body['supervised'] == "true":
-            supervised = 1
+            model_dict['supervised'] = 1
 
-        c.execute('update models set serialized_model = :serialized_model, serializer_bytes = :serializer_bytes, serializer_text = :serializer_text, supervised = :supervised, type = :type, estimator = :estimator, scores = :scores, metadata = :metadata where id = :id',
-            {'serialized_model': body['serialized_model'],
-            'serializer_bytes': body['serializer_bytes'],
-            'serializer_text': body['serializer_text'],
-            'supervised': supervised,
-            'type': body['type'],
-            'estimator': body['estimator'],
-            'scores': json.dumps(body['scores']),
-            'version': body['version'],
-            'metadata': json.dumps(body['metadata']),
-            'id': model['id']
-            })
+        model_dict['scores'] = json.dumps(body['scores'])
+        model_dict['metadata'] = json.dumps(body['metadata'])
+        model_dict['id'] = model['id']
+
+        c.execute('update models set serialized_model = :serialized_model, serializer_bytes = :serializer_bytes, serializer_text = :serializer_text, supervised = :supervised, type = :type, estimator = :estimator, scores = :scores, metadata = :metadata, date = :date, description = :description, owner = :owner where id = :id',
+            model_dict)
 
         conn.commit()
         return "The model has been successfully updated.", 200
@@ -189,21 +174,29 @@ def get_modellist(modelname=None):
     rows = c.execute(sql_sentence, args).fetchall()
     model_list = []
     for model in rows:
-        dict_response = {'name': model['name'],
-                        'serialized_model': model['serialized_model'],
-                        'serializer_bytes': model['serializer_bytes'],
-                        'serializer_text': model['serializer_text'],
-                        'supervised': model['supervised'],
-                        'type': model['type'],
-                        'estimator': model['estimator'],
-                        'scores': json.loads(model['scores']),
-                        'version': model['version'],
-                        'metadata': json.loads(model['metadata'])}
-        model_list.append(dict_response)
+        model_dict = dict(model)
+        model_dict['scores'] = json.loads(model['scores'])
+        model_dict['metadata'] = json.loads(model['metadata'])
+        
+        model_list.append(model_dict)
 
-    json_list = json.dumps(model_list, indent=4)
-    return (json_list, {'Content-Type': 'application/json'})
+    if 'format' in request.args and request.args['format'] == 'json':
+        json_list = json.dumps(model_list, indent=4)
+        return (json_list, {'Content-Type': 'application/json'})
+    else:
+        for model in model_list:
+            new_scores = {}
+            for key, value in model['scores'].items():
+                new_scores[key] = "{:.4f}".format(value)
+            model['scores'] = new_scores
+            if model['date'] == None:
+                date_str = "-"
+            else:
+                date = datetime.fromisoformat(str(model['date']))
+                date_str = date.strftime('%d %b. %Y %H:%M')
+            model['date'] = date_str
+        return render_template('list.html', modelcount=len(model_list), modellist=model_list)
 
 if __name__ == '__main__':
-    init_kerberos(app, hostname='EXAMPLE.COM')
+    #init_kerberos(app, hostname='EXAMPLE.COM')
     app.run(debug=True, host='0.0.0.0')

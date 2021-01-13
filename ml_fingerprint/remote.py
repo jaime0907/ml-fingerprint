@@ -22,7 +22,7 @@ class RemoteServer():
 
     
     
-    def insert_model(self, model, name, supervised, model_type, scores, version, metadata):
+    def insert_model(self, model, name, supervised, model_type, scores, version, metadata, date, description, owner):
         '''
         Takes a model and all its metadata, and uploads it to the server.
 
@@ -43,7 +43,12 @@ class RemoteServer():
             The version of the model.
         metadata : dict
             Dictionary with any additional data you want to store alongside the model.
-
+        date : datetime.datetime
+            Datetime object with the date and time of the creation of the model (usually datetime.now())
+        description : str
+            Description of the model.
+        owner : str
+            Owner(s) of the model.
         Returns
         -------
         requests.Response
@@ -57,7 +62,7 @@ class RemoteServer():
         supervised_int = 0
         if supervised:
             supervised_int = 1
-
+        date_str = date.isoformat()
         data = {'name': name,
                 'serialized_model': b64string_model,
                 'serializer_bytes': serializer_bytes,
@@ -67,7 +72,10 @@ class RemoteServer():
                 'estimator': estimator,
                 'scores': scores,
                 'version': version,
-                'metadata': metadata
+                'metadata': metadata,
+                'date': date_str,
+                'description': description,
+                'owner': owner
                 }
         res = req.post(self.url + 'model/' + name, json=data)
 
@@ -112,7 +120,7 @@ class RemoteServer():
             else:
                 return model
 
-    def update_model(self, model, name, supervised, model_type, scores, version, metadata):
+    def update_model(self, model, name, supervised, model_type, scores, version, metadata, date, description, owner):
         '''
         Takes a model that is already present on the server and updates the model itself
         and all its metadata.
@@ -151,6 +159,8 @@ class RemoteServer():
         supervised_int = 0
         if supervised:
             supervised_int = 1
+            
+        date_str = date.isoformat()
 
         data = {'name': name,
                 'serialized_model': b64string_model,
@@ -161,7 +171,10 @@ class RemoteServer():
                 'estimator': estimator,
                 'scores': scores,
                 'version': version,
-                'metadata': metadata
+                'metadata': metadata,
+                'date': date_str,
+                'description': description,
+                'owner': owner
                 }
         res = req.put(self.url + 'model/' + name, json=data)
 
