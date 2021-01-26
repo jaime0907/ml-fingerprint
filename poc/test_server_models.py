@@ -4,7 +4,8 @@ import sqlite3
 import pickle
 import requests as req
 import json
-import base64
+import base64 
+import datetime
 
 url = 'http://localhost:5000/'
 
@@ -115,7 +116,7 @@ def main_function():
 
 def main2():
     # Get the key from the database
-    database = 'ml_fingerprint_database.db'
+    database = 'flask/ml_fingerprint_database.db'
     conn = sqlite3.connect(database)
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
@@ -130,14 +131,16 @@ def main2():
     model = example_models.vanderplas_regression()
     model.sign(private_key)
 
-    rem = remote.RemoteServer(url)
+    api_key = "insert api key here"
 
-    rem.insert_model(model, modelname, True, "regression", {"MSE":0.987}, "1.2.78", {"parameter_X":"TEST"})
+    rem = remote.RemoteServer(url, api_key)
+
+    rem.insert_model(model, modelname, True, "regression", {"MSE":0.987}, "1.2.78", {"parameter_X":"TEST"}, datetime.datetime.now(), "Example from VanderPlas book")
     
     #update_model(model, "example_regression", True, "regression", {"MSE":0.987}, "1.2.78", {"parameter_X":"TEST"})
     server_model = rem.get_model(modelname, public_key)
     print(server_model.coef_)
-    rem.delete_model(modelname)
+    #rem.delete_model(modelname)
 
 
 if __name__ == '__main__':

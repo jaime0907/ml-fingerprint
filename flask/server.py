@@ -1,10 +1,10 @@
-from flask import Flask, request, render_template, send_from_directory
+from flask import Flask, request, render_template, url_for, session, redirect
 import sqlite3
 import os
 import json
-from datetime import datetime
-#from flask_kerberos import requires_authentication, init_kerberos
-
+from datetime import datetime, timedelta
+from authlib.integrations.flask_client import OAuth
+import secrets
 
 database = os.path.join(os.getcwd(), 'ml_fingerprint_database.db')
 
@@ -14,11 +14,82 @@ def get_db_connection():
     return conn
 
 app = Flask(__name__, static_folder='assets')
+app.secret_key = '!secret'
+app.config.from_object('config')
+oauth = OAuth(app)
+
+CONF_URL = 'https://accounts.google.com/.well-known/openid-configuration'
+
+oauth.register(
+    name='google',
+    server_metadata_url=CONF_URL,
+    client_kwargs={
+        'scope': 'openid email profile'
+    }
+)
 
 @app.route('/', methods=['GET'])
-#@requires_authentication
 def main_page():
-    return render_template('index.html')
+    login = 'user' not in session
+    user = ""
+    if not login:
+        user = session['user']
+    return render_template('index.html', login=login, user=user)
+
+
+@app.route('/login')
+def login():
+    redirect_uri = url_for('auth', _external=True)
+    return oauth.google.authorize_redirect(redirect_uri)
+
+
+@app.route('/auth')
+def auth():
+    token = oauth.google.authorize_access_token()
+    user = oauth.google.parse_id_token(token)
+    session['user'] = user
+    return redirect('/')
+
+@app.route('/logout')
+def logout():
+    session.pop('user', None)
+    return redirect('/')
+    
+
+@app.route('/profile')
+def profile():
+    
+    login = 'user' not in session
+    user = ""
+    if not login:
+        user = session['user']
+
+    conn = get_db_connection()
+    c = conn.cursor()
+
+    if not login:
+        api_key = ""
+        expire_date_html = ""
+        
+        if request.args.get('generatekey') == "true":
+            api_key = secrets.token_urlsafe(16)
+            create_date = datetime.now()
+            expire_date = create_date + timedelta(days=1)
+            expire_date_html = expire_date.strftime("%a. %e %B %Y %H:%M")
+            c.execute('delete from api_keys where email = ?', (user['email'],))
+            c.execute('insert into api_keys (email, key, create_date, expire_date, name) values (?,?,?,?,?)', (user['email'], api_key, create_date.isoformat(), expire_date.isoformat(), user['name']))
+            conn.commit()
+        else:
+            row = c.execute('select * from api_keys where email = ? order by expire_date desc', (user['email'],)).fetchone()
+            if row != None:
+                api_key = row['key']
+                expire_date = datetime.fromisoformat(row['expire_date'])
+                expire_date_html = expire_date.strftime("%a. %e %B %Y %H:%M")
+
+        return render_template('profile.html', login=login, user=user, api_key=api_key, expire_date=expire_date_html)
+    else:
+        return "403 Forbidden", 403
+
 
 @app.route('/model/<modelname>', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def manage_model(modelname):
@@ -36,6 +107,16 @@ def manage_model(modelname):
 def get_model(modelname):
     conn = get_db_connection()
     c = conn.cursor()
+
+    if 'api_key' not in request.args:
+        return "No API key provided.", 403
+    api_key = request.args['api_key']
+    current_time = datetime.now()
+    row = c.execute("select * from api_keys where key = ? and expire_date >= ?", (api_key, current_time.isoformat())).fetchone()
+    if row == None:
+        return "API key invalid", 403
+    email = row['email']
+    name = row['name']
 
     model = None
     if 'version' in request.args:
@@ -60,6 +141,17 @@ def upload_model(modelname):
 
     body = request.json
     print(body)
+
+    if 'api_key' not in body:
+        return "No API key provided.", 403
+    api_key = body['api_key']
+    current_time = datetime.now()
+    row = c.execute("select * from api_keys where key = ? and expire_date >= ?", (api_key, current_time.isoformat())).fetchone()
+    if row == None:
+        return "API key invalid", 403
+    email = row['email']
+    name = row['name']
+
     model = c.execute('select * from models where name = ? and version = ?', (modelname,body['version'])).fetchone()
 
     if model == None:
@@ -71,7 +163,9 @@ def upload_model(modelname):
         model_dict['scores'] = json.dumps(body['scores'])
         model_dict['metadata'] = json.dumps(body['metadata'])
         model_dict['name'] = modelname
-        
+        model_dict['owner'] = name
+        model_dict['email'] = email
+
         c.execute('insert into models (name, serialized_model, serializer_bytes, serializer_text, supervised, type, estimator, scores, version, metadata, date, description, owner) values (:name, :serialized_model, :serializer_bytes, :serializer_text, :supervised, :type, :estimator, :scores, :version, :metadata, :date, :description, :owner)',
             model_dict)
 
@@ -86,6 +180,16 @@ def update_model(modelname):
 
     body = request.json
 
+    if 'api_key' not in body:
+        return "No API key provided.", 403
+    api_key = body['api_key']
+    current_time = datetime.now()
+    row = c.execute("select * from api_keys where key = ? and expire_date >= ?", (api_key, current_time.isoformat())).fetchone()
+    if row == None:
+        return "API key invalid", 403
+    email = row['email']
+    name = row['name']
+
     model = c.execute('select * from models where name = ? and version = ?', (modelname,body['version'])).fetchone()
     if model != None:
         model_dict = dict(body)
@@ -96,6 +200,8 @@ def update_model(modelname):
         model_dict['scores'] = json.dumps(body['scores'])
         model_dict['metadata'] = json.dumps(body['metadata'])
         model_dict['id'] = model['id']
+        model_dict['owner'] = name
+        model_dict['email'] = email
 
         c.execute('update models set serialized_model = :serialized_model, serializer_bytes = :serializer_bytes, serializer_text = :serializer_text, supervised = :supervised, type = :type, estimator = :estimator, scores = :scores, metadata = :metadata, date = :date, description = :description, owner = :owner where id = :id',
             model_dict)
@@ -108,6 +214,16 @@ def update_model(modelname):
 def delete_model(modelname):
     conn = get_db_connection()
     c = conn.cursor()
+
+    if 'api_key' not in request.args:
+        return "No API key provided.", 403
+    api_key = request.args['api_key']
+    current_time = datetime.now()
+    row = c.execute("select * from api_keys where key = ? and expire_date >= ?", (api_key, current_time.isoformat())).fetchone()
+    if row == None:
+        return "API key invalid", 403
+    email = row['email']
+    name = row['name']
 
     model = None
     if 'version' in request.args:
@@ -143,6 +259,11 @@ def manage_modellist_versions(modelname):
 
 
 def get_modellist(modelname=None):
+    login = 'user' not in session
+    user = ""
+    if not login:
+        user = session['user']
+
     conn = get_db_connection()
     c = conn.cursor()
 
@@ -195,8 +316,7 @@ def get_modellist(modelname=None):
                 date = datetime.fromisoformat(str(model['date']))
                 date_str = date.strftime('%d %b. %Y %H:%M')
             model['date'] = date_str
-        return render_template('list.html', modelcount=len(model_list), modellist=model_list)
+        return render_template('list.html', modelcount=len(model_list), modellist=model_list, login=login, user=user)
 
 if __name__ == '__main__':
-    #init_kerberos(app, hostname='EXAMPLE.COM')
     app.run(debug=True, host='0.0.0.0')

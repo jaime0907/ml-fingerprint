@@ -84,6 +84,24 @@
                   <a href="/modellist" class="nav-link g-py-7 g-px-0">Model List</a>
                 </li>
                 <!-- End Model List -->
+                {% if login %}
+                  <!-- Login -->
+                  <li class="nav-item  g-mx-10--lg g-mx-15--xl {% block css_login_active %}{% endblock %}">
+                    <a href="/login" class="nav-link g-py-7 g-px-0">Login</a>
+                  </li>
+                  <!-- End Login -->
+                {% else %}
+                  <!-- User -->
+                  <li class="nav-item  g-mx-10--lg g-mx-15--xl {% block css_profile_active %}{% endblock %}">
+                    <a href="/profile" class="nav-link g-py-7 g-px-0">{{user.name}}</a>
+                  </li>
+                  <!-- End User -->
+                  <!-- Logout -->
+                  <li class="nav-item  g-mx-10--lg g-mx-15--xl">
+                    <a href="/logout" class="nav-link g-py-7 g-px-0">Logout</a>
+                  </li>
+                  <!-- End Logout -->
+                {% endif %}
               </ul>
             </div>
             <!-- End Navigation -->
@@ -187,6 +205,8 @@
         }, 200);
       });
   </script>
+
+  {% block scripts %}{% endblock %}
 
 
 </body>

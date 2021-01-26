@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+  <section class="auto-init height-is-based-on-content use-loading mode-scroll loaded dzsprx-readyall" data-options="{direction: &quot;reverse&quot;, settings_mode_oneelement_max_offset: &quot;150&quot;}">
+
+    <div class="container text-center g-py-100--md g-py-80">
+      <h2 class="h1 text-uppercase g-font-weight-300 g-mb-30">{{user.name}}</h2>
+
+      <h3 class="h2 text-uppercase g-font-weight-600 g-mb-30">API Key</h3>
+
+      <!-- Search Form -->
+      <form class="g-width-30x--md mx-auto">
+        <div class="form-group g-mb-20">
+          <div class="input-group u-shadow-v21 rounded g-mb-15">
+            <input class="form-control form-control-md g-brd-white g-font-size-16 border-right-0 pr-0 g-py-15" type="text" placeholder="You don't have an active API key" id="api_key_textbox" value={{api_key}}>
+            <div class="input-group-addon d-flex align-items-center g-bg-white g-brd-white g-color-gray-light-v1 g-pa-2">
+              <div class="btn u-btn-primary g-font-size-16 g-py-15 g-px-20" onclick="copyApiKey()">
+                <i class="icon-docs g-pos-rel g-top-1"></i>
+              </div>
+            </div>
+          </div>
+          {% if expire_date != "" %}
+            <small class="form-text g-opacity-0_8 g-font-size-default">Key valid until {{expire_date}}</small>
+          {% endif %}
+          <div class="d-inline-block g-hidden-md-down g-pos-rel g-valign-middle g-pl-30 g-pl-0--lg">
+            <a class="btn u-btn-outline-primary g-font-size-13 text-uppercase g-py-10 g-px-15" href="/profile?generatekey=true">Generate API Key</a>
+          </div>
+        </div>
+      </form>
+      <!-- End Search Form -->
+    </div>
+  </section>
+
+
+{% endblock %}
+
+{% block css_profile_active %}active{% endblock %}
+
+{% block scripts %}
+<script>
+function copyApiKey() {
+    /* Get the text field */
+    var copyText = document.getElementById("api_key_textbox");
+  
+    /* Select the text field */
+    copyText.select();
+    copyText.setSelectionRange(0, 99999); /* For mobile devices */
+  
+    /* Copy the text inside the text field */
+    document.execCommand("copy");
+  
+  }
+</script>
+{% endblock %}

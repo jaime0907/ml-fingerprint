@@ -1,3 +1,4 @@
+from requests import api
 from . import ml_fingerprint, example_models, exceptions
 from Crypto.PublicKey import RSA
 import sqlite3
@@ -15,14 +16,15 @@ class RemoteServer():
     url : str
         URL of the API of the remote server.
     """
-    def __init__(self, url):
+    def __init__(self, url, api_key):
         if not url.endswith('/'):
             url += "/"
         self.url = url
+        self.api_key = api_key
 
     
     
-    def insert_model(self, model, name, supervised, model_type, scores, version, metadata, date, description, owner):
+    def insert_model(self, model, name, supervised, model_type, scores, version, metadata, date, description):
         '''
         Takes a model and all its metadata, and uploads it to the server.
 
@@ -47,8 +49,6 @@ class RemoteServer():
             Datetime object with the date and time of the creation of the model (usually datetime.now())
         description : str
             Description of the model.
-        owner : str
-            Owner(s) of the model.
         Returns
         -------
         requests.Response
@@ -75,7 +75,7 @@ class RemoteServer():
                 'metadata': metadata,
                 'date': date_str,
                 'description': description,
-                'owner': owner
+                'api_key': self.api_key
                 }
         res = req.post(self.url + 'model/' + name, json=data)
 
@@ -101,10 +101,11 @@ class RemoteServer():
             The received model from the server.
         '''
 
-        version_text = ""
+        params = {}
+        params['api_key'] = self.api_key
         if version != None:
-            version_text = "?version=" + version
-        res = req.get(self.url + 'model/' + modelname + version_text)
+            params['version'] = version
+        res = req.get(self.url + 'model/' + modelname, params=params)
         if res.status_code != 200:
             print(res.text)
         else:
@@ -120,7 +121,7 @@ class RemoteServer():
             else:
                 return model
 
-    def update_model(self, model, name, supervised, model_type, scores, version, metadata, date, description, owner):
+    def update_model(self, model, name, supervised, model_type, scores, version, metadata, date, description):
         '''
         Takes a model that is already present on the server and updates the model itself
         and all its metadata.
@@ -145,6 +146,10 @@ class RemoteServer():
             The version of the model. Has to be the same as the one to be updated.
         metadata : dict
             Dictionary with any additional data you want to store alongside the model.
+        date : datetime.datetime
+            Datetime object with the date and time of the creation of the model (usually datetime.now())
+        description : str
+            Description of the model.
 
         Returns
         -------
@@ -174,7 +179,7 @@ class RemoteServer():
                 'metadata': metadata,
                 'date': date_str,
                 'description': description,
-                'owner': owner
+                'api_key': self.api_key
                 }
         res = req.put(self.url + 'model/' + name, json=data)
 
@@ -196,10 +201,11 @@ class RemoteServer():
             Response object returned by the server after the PUT petition.
         '''
 
-        version_text = ""
+        params = {}
+        params['api_key'] = self.api_key
         if version != None:
-            version_text = "?version=" + version
-        res = req.delete(self.url + 'model/' + modelname + version_text)
+            params['version'] = version
+        res = req.delete(self.url + 'model/' + modelname, params=params)
         print(res.text)
 
 
