@@ -28,6 +28,7 @@ oauth.register(
     }
 )
 
+
 @app.route('/', methods=['GET'])
 def main_page():
     login = 'user' not in session
@@ -133,7 +134,7 @@ def get_model(modelname):
         json_response = json.dumps(model_dict, indent=4)
         return (json_response, {'Content-Type': 'application/json'})
     else:
-        return ("The selected model doesn't exist.", 400)
+        return ("The selected model doesn't exist.", 404)
 
 def upload_model(modelname):
     conn = get_db_connection()
@@ -166,7 +167,7 @@ def upload_model(modelname):
         model_dict['owner'] = name
         model_dict['email'] = email
 
-        c.execute('insert into models (name, serialized_model, serializer_bytes, serializer_text, supervised, type, estimator, scores, version, metadata, date, description, owner) values (:name, :serialized_model, :serializer_bytes, :serializer_text, :supervised, :type, :estimator, :scores, :version, :metadata, :date, :description, :owner)',
+        c.execute('insert into models (name, serialized_model, serializer_bytes, serializer_text, supervised, type, estimator, scores, version, metadata, date, description, owner, email) values (:name, :serialized_model, :serializer_bytes, :serializer_text, :supervised, :type, :estimator, :scores, :version, :metadata, :date, :description, :owner, :email)',
             model_dict)
 
         conn.commit()
@@ -203,7 +204,7 @@ def update_model(modelname):
         model_dict['owner'] = name
         model_dict['email'] = email
 
-        c.execute('update models set serialized_model = :serialized_model, serializer_bytes = :serializer_bytes, serializer_text = :serializer_text, supervised = :supervised, type = :type, estimator = :estimator, scores = :scores, metadata = :metadata, date = :date, description = :description, owner = :owner where id = :id',
+        c.execute('update models set serialized_model = :serialized_model, serializer_bytes = :serializer_bytes, serializer_text = :serializer_text, supervised = :supervised, type = :type, estimator = :estimator, scores = :scores, metadata = :metadata, date = :date, description = :description, owner = :owner, email = :email where id = :id',
             model_dict)
 
         conn.commit()
@@ -319,4 +320,4 @@ def get_modellist(modelname=None):
         return render_template('list.html', modelcount=len(model_list), modellist=model_list, login=login, user=user)
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+    app.run(debug=True, host='0.0.0.0', port=5000, ssl_context=('cert.pem', 'key.pem'), threaded=True)

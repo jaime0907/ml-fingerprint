@@ -16,11 +16,12 @@ class RemoteServer():
     url : str
         URL of the API of the remote server.
     """
-    def __init__(self, url, api_key):
+    def __init__(self, url, api_key, unsafe_https=False):
         if not url.endswith('/'):
             url += "/"
         self.url = url
         self.api_key = api_key
+        self.unsafe_https = unsafe_https
 
     
     
@@ -77,7 +78,9 @@ class RemoteServer():
                 'description': description,
                 'api_key': self.api_key
                 }
-        res = req.post(self.url + 'model/' + name, json=data)
+        res = req.post(self.url + 'model/' + name, json=data, verify=not self.unsafe_https)
+        if res.status_code != 200:
+            print("ERROR: ", res.text)
 
     def get_model(self, modelname, public_key, version=None):
         '''
@@ -105,9 +108,9 @@ class RemoteServer():
         params['api_key'] = self.api_key
         if version != None:
             params['version'] = version
-        res = req.get(self.url + 'model/' + modelname, params=params)
+        res = req.get(self.url + 'model/' + modelname, params=params, verify=not self.unsafe_https)
         if res.status_code != 200:
-            print(res.text)
+            print("ERROR: ", res.text)
         else:
             data = res.json()
             model = decode_model(data['serialized_model'])
@@ -181,7 +184,9 @@ class RemoteServer():
                 'description': description,
                 'api_key': self.api_key
                 }
-        res = req.put(self.url + 'model/' + name, json=data)
+        res = req.put(self.url + 'model/' + name, json=data, verify=not self.unsafe_https)
+        if res.status_code != 200:
+            print("ERROR: ", res.text)
 
     def delete_model(self, modelname, version=None):
         '''
@@ -205,8 +210,11 @@ class RemoteServer():
         params['api_key'] = self.api_key
         if version != None:
             params['version'] = version
-        res = req.delete(self.url + 'model/' + modelname, params=params)
-        print(res.text)
+        res = req.delete(self.url + 'model/' + modelname, params=params, verify=not self.unsafe_https)
+        if res.status_code != 200:
+            print("ERROR: ", res.text)
+        else:
+            print(res.text)
 
 
 def encode_model(model):

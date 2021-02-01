@@ -7,7 +7,7 @@ import json
 import base64 
 import datetime
 
-url = 'http://localhost:5000/'
+url = 'https://localhost:5000/'
 
 def insert_model(model, name, supervised, model_type, coefficients, version, metadata):
 
@@ -131,16 +131,16 @@ def main2():
     model = example_models.vanderplas_regression()
     model.sign(private_key)
 
-    api_key = "insert api key here"
+    api_key = "Insert API Key here"
 
-    rem = remote.RemoteServer(url, api_key)
+    rem = remote.RemoteServer(url, api_key, unsafe_https=True)
 
     rem.insert_model(model, modelname, True, "regression", {"MSE":0.987}, "1.2.78", {"parameter_X":"TEST"}, datetime.datetime.now(), "Example from VanderPlas book")
     
     #update_model(model, "example_regression", True, "regression", {"MSE":0.987}, "1.2.78", {"parameter_X":"TEST"})
     server_model = rem.get_model(modelname, public_key)
     print(server_model.coef_)
-    #rem.delete_model(modelname)
+    rem.delete_model(modelname)
 
 
 if __name__ == '__main__':
