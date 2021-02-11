@@ -268,6 +268,16 @@ def get_modellist(modelname=None):
     conn = get_db_connection()
     c = conn.cursor()
 
+    if 'format' in request.args and request.args['format'] == 'json':
+        if 'api_key' not in request.args:
+            return "No API key provided.", 403
+        api_key = request.args['api_key']
+        current_time = datetime.now()
+        row = c.execute("select * from api_keys where key = ? and expire_date >= ?", (api_key, current_time.isoformat())).fetchone()
+        if row == None:
+            return "API key invalid", 403
+
+    
     sql_sentence = "select * from (select * from models order by version desc) where 1 = 1"
     args = {}
     
@@ -297,6 +307,7 @@ def get_modellist(modelname=None):
     model_list = []
     for model in rows:
         model_dict = dict(model)
+        model_dict.pop('serialized_model')
         model_dict['scores'] = json.loads(model['scores'])
         model_dict['metadata'] = json.loads(model['metadata'])
         

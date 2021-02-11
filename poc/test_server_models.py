@@ -142,6 +142,12 @@ def main2():
     print(server_model.coef_)
     rem.delete_model(modelname)
 
+def main3():
+
+    api_key = "oD1DVFnbE_F7wpQ54v6Hxg"
+
+    rem = remote.RemoteServer(url, api_key, unsafe_https=True)
+    print(rem.get_list_models())
 
 if __name__ == '__main__':
-    main2()
+    main3()

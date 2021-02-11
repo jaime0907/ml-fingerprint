@@ -216,6 +216,43 @@ class RemoteServer():
         else:
             print(res.text)
 
+    def get_list_models(self, modelname=None, type_str=None, allversions=False):
+        '''
+        Retrieves the list of models from the server, filtering by the given parameters.
+
+        Parameters
+        ----------
+        modelname : str, optional
+            If specified, it will show all versions of that model.
+        type_str : str, optional
+            If specified, it will filter by that model type.
+            If type is "supervised" or "unsupervised", it will filter by that instead.
+        allversions : bool, optional
+            If True, it will show all versions of all models in the list.
+            If False, it will show only the lastest version for each model.
+
+        Returns
+        -------
+        list
+            List containing objects with all the metadata of the models.
+        '''
+
+        params = {}
+        params['api_key'] = self.api_key
+        params['format'] = "json"
+        modelname_str = ""
+        if modelname != None:
+            modelname_str = "/" + modelname
+        if type_str != None:
+            params['type'] = type_str
+        if allversions:
+            params['allversions'] = "true"
+        res = req.get(self.url + 'modellist' + modelname_str, params=params, verify=not self.unsafe_https)
+        if res.status_code != 200:
+            print("ERROR: ", res.text)
+        else:
+            data = res.json()
+            return data
 
 def encode_model(model):
     pickled_model = pickle.dumps(model)
