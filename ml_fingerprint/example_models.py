@@ -6,6 +6,7 @@ from sklearn.svm import SVC
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
+from sklearn.cluster import KMeans
 import csv
 import pandas as pd
 
@@ -168,3 +169,39 @@ def rain_classifier():
 
     score = accuracy_score(y_test, y_pred_test)
     return model, score
+
+
+def pokemon_clustering(n_clusters=4):
+    '''
+    Clustering model that groups Pokémon in k different clusters.
+    The dataset is taken from Kaggle and can be found here:
+    https://www.kaggle.com/rounakbanik/pokemon
+    It consists of all the data all Pokémon have in the games.
+    We will only use the stats (HP, Attack, Defense, Special Attack, 
+    Special Defense and Speed)
+
+    Parameters
+    ----------
+    n_clusters : int
+        Number of clusters (k) to divide and group the Pokémon.
+
+    Returns
+    -------
+    model : sklearn.linear_model.LogisticRegression
+        The clustering model, already trained.
+    groups: list
+        List of k datasets, which will contain all the data
+        for each Pokémon in that group.
+    '''
+    dataset = pd.read_csv('datasets/pokemon.csv')
+
+    stats = ['hp', 'attack', 'defense', 'sp_attack', 'sp_defense', 'speed']
+    X = dataset[stats]
+    km = KMeans(n_clusters=n_clusters)
+    km.fit(X)
+
+    groups = []
+    for k in range(n_clusters):
+        groups.append(dataset.iloc[km.labels_ == k])
+
+    return km, groups

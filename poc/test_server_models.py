@@ -143,11 +143,28 @@ def main2():
     rem.delete_model(modelname)
 
 def main3():
+    database = 'flask/ml_fingerprint_database.db'
+    conn = sqlite3.connect(database)
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+    db_key = c.execute('select * from key order by id desc limit 1').fetchone()
+    public_key = RSA.import_key(db_key['publickey'])
+    private_key = RSA.import_key(db_key['privatekey'])
 
-    api_key = "oD1DVFnbE_F7wpQ54v6Hxg"
+    # Decorate BaseEstimator
+    ml_fingerprint.decorate_base_estimator()
 
+    modelname = 'pokemon_clustering'
+    model, groups = example_models.pokemon_clustering()
+    model.sign(private_key)
+
+    api_key = "plhtvpafgH3Al6KMa8IbtQ"
+
+    
     rem = remote.RemoteServer(url, api_key, unsafe_https=True)
-    print(rem.get_list_models())
+    rem.insert_model(model, modelname, True, "clustering", {}, "1.0.0", {}, datetime.datetime.now(), "Modelo de clustering que agrupa Pokémon en 4 grupos distintos.")
+    list_models = rem.get_list_models(doprint=True)
+    rem.delete_model(modelname)
 
 if __name__ == '__main__':
     main3()

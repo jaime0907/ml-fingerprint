@@ -216,7 +216,7 @@ class RemoteServer():
         else:
             print(res.text)
 
-    def get_list_models(self, modelname=None, type_str=None, allversions=False):
+    def get_list_models(self, modelname=None, type_str=None, allversions=False, doprint=False):
         '''
         Retrieves the list of models from the server, filtering by the given parameters.
 
@@ -230,7 +230,8 @@ class RemoteServer():
         allversions : bool, optional
             If True, it will show all versions of all models in the list.
             If False, it will show only the lastest version for each model.
-
+        doprint : bool, optional
+            If True, pretty prints the list of models.
         Returns
         -------
         list
@@ -252,6 +253,13 @@ class RemoteServer():
             print("ERROR: ", res.text)
         else:
             data = res.json()
+            if doprint:
+                for model in data:
+                    print("--", model['name'], "--")
+                    for col in model.keys():
+                        if col == "name":
+                            continue
+                        print(str(col) + ": " + str(model[col]))
             return data
 
 def encode_model(model):
