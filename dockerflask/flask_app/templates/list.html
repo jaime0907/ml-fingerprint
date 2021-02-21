@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <section class="g-pt-50 g-pb-90">
+      <div class="container">
+        <!-- Search Info -->
+        <div class="d-md-flex justify-content-between g-mb-30">
+          <h3 class="h6 text-uppercase g-mb-10 g-mb--lg"><span class="g-color-gray-dark-v1">{{modelcount}}</span> models</h3>
+        </div>
+        <!-- End Search Info -->
+
+        {% for model in modellist %}
+          <!-- Search Result -->
+          <article>
+            <header class="g-mb-15">
+              <h2 class="h4 g-mb-5">
+                  <a class="u-link-v5 g-color-gray-dark-v1 g-color-primary--hover" href="/model/{{model.name}}">{{model.name}}</a>
+                </h2>
+              <span class="g-color-primary">/model/{{model.name}}</span>
+            </header>
+
+            <p class="g-mb-15">{{model.description}}</p>
+
+            <div class="d-lg-flex justify-content-between align-items-center g-mb-10">
+              <!-- Search Info -->
+              <ul class="list-inline g-mb-10 g-mb-0--lg">
+                <li class="list-inline-item g-mr-30">
+                  <i class="icon-user g-pos-rel g-top-1 g-color-gray-dark-v5 g-mr-5"></i> {{model.owner}}
+                </li>
+                <li class="list-inline-item g-mr-30">
+                  <i class="icon-settings g-pos-rel g-top-1 g-color-gray-dark-v5 g-mr-5"></i> {% if model.supervised == 0 %}Supervised{% else %}Unsupervised{% endif %} ({{model.type}})
+                </li>
+                <li class="list-inline-item g-mr-30">
+                  <i class="icon-layers g-pos-rel g-top-1 g-color-gray-dark-v5 g-mr-5"></i> {{model.estimator}}
+                </li>
+                <li class="list-inline-item g-mr-30">
+                  <i class="icon-calendar g-pos-rel g-top-1 g-color-gray-dark-v5 g-mr-5"></i> {{model.date}}
+                </li>
+                <li class="list-inline-item g-mr-30">
+                  <i class="icon-info g-pos-rel g-top-1 g-color-gray-dark-v5 g-mr-5"></i> {{model.version}}
+                </li>
+              </ul>
+            </div>
+
+            <div class="d-lg-flex justify-content-between align-items-center g-mb-10">
+              <!-- Search Info -->
+              <ul class="list-inline g-mb-10 g-mb-0--lg">
+                <i class="icon-chart g-pos-rel g-top-1 g-color-gray-dark-v5 g-mr-5"></i>
+                {% for k,v in model.scores.items() %}
+                  <li class="list-inline-item g-mr-30">
+                     {{k}}: {{v}}
+                  </li>
+                {% endfor %}
+                <li class="list-inline-item g-mr-30">
+                  <i class="icon-envelope g-pos-rel g-top-1 g-color-gray-dark-v5 g-mr-5"></i> Serialized to bytes with {{model.serializer_bytes}} and then to ASCII with {{model.serializer_text}}.
+                </li>
+              </ul>
+            </div>
+          </article>
+          <!-- End Search Result -->
+
+          <hr class="g-brd-gray-light-v4 g-my-40">
+        {% endfor %}
+
+    </section>
+
+    <a class="js-go-to u-go-to-v1" href="#" data-type="fixed" data-position='{
+     "bottom": 15,
+     "right": 15
+   }' data-offset-top="400" data-compensation="#js-header" data-show-effect="zoomIn">
+      <i class="hs-icon hs-icon-arrow-top"></i>
+    </a>
+  </main>
+
+  <div class="u-outer-spaces-helper"></div>
+
+
+  <!-- JS Global Compulsory -->
+  <script src="../../assets/vendor/jquery/jquery.min.js"></script>
+  <script src="../../assets/vendor/jquery-migrate/jquery-migrate.min.js"></script>
+  <script src="../../assets/vendor/popper.js/popper.min.js"></script>
+  <script src="../../assets/vendor/bootstrap/bootstrap.min.js"></script>
+
+
+  <!-- JS Implementing Plugins -->
+  <script src="../../assets/vendor/appear.js"></script>
+  <script src="../../assets/vendor/hs-megamenu/src/hs.megamenu.js"></script>
+  <script src="../../assets/vendor/dzsparallaxer/dzsparallaxer.js"></script>
+  <script src="../../assets/vendor/dzsparallaxer/dzsscroller/scroller.js"></script>
+  <script src="../../assets/vendor/dzsparallaxer/advancedscroller/plugin.js"></script>
+
+  <!-- JS Unify -->
+  <script src="../../assets/js/hs.core.js"></script>
+  <script src="../../assets/js/helpers/hs.hamburgers.js"></script>
+  <script src="../../assets/js/components/hs.header.js"></script>
+  <script src="../../assets/js/components/hs.tabs.js"></script>
+  <script src="../../assets/js/components/hs.rating.js"></script>
+  <script src="../../assets/js/components/hs.go-to.js"></script>
+
+  <!-- JS Customization -->
+  <script src="../../assets/js/custom.js"></script>
+
+  <!-- JS Plugins Init. -->
+  <script>
+    $(document).on('ready', function () {
+        // initialization of go to
+        $.HSCore.components.HSGoTo.init('.js-go-to');
+
+        // initialization of tabs
+        $.HSCore.components.HSTabs.init('[role="tablist"]');
+
+        // initialization of rating
+        $.HSCore.components.HSRating.init($('.js-rating'), {
+          spacing: 2
+        });
+      });
+
+      $(window).on('load', function () {
+        // initialization of header
+        $.HSCore.components.HSHeader.init($('#js-header'));
+        $.HSCore.helpers.HSHamburgers.init('.hamburger');
+
+        // initialization of HSMegaMenu component
+        $('.js-mega-menu').HSMegaMenu({
+          event: 'hover',
+          pageContainer: $('.container'),
+          breakpoint: 991
+        });
+      });
+
+      $(window).on('resize', function () {
+        setTimeout(function () {
+          $.HSCore.components.HSTabs.init('[role="tablist"]');
+        }, 200);
+      });
+  </script>
+{% endblock %}
+
+{% block css_modellist_active %}active{% endblock %}

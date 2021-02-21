@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Title -->
+  <title>ml-fingerprint</title>
+
+  <!-- Required Meta Tags Always Come First -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+  <!-- Favicon -->
+  <link rel="shortcut icon" href="assets/favicon.ico">
+  <!-- Google Fonts -->
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans%3A400%2C300%2C500%2C600%2C700%7CPlayfair+Display%7CRoboto%7CRaleway%7CSpectral%7CRubik">
+  <!-- CSS Global Compulsory -->
+  <link rel="stylesheet" href="../../assets/vendor/bootstrap/bootstrap.min.css">
+  <!-- CSS Global Icons -->
+  <link rel="stylesheet" href="../../assets/vendor/icon-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="../../assets/vendor/icon-line/css/simple-line-icons.css">
+  <link rel="stylesheet" href="../../assets/vendor/icon-etlinefont/style.css">
+  <link rel="stylesheet" href="../../assets/vendor/icon-line-pro/style.css">
+  <link rel="stylesheet" href="../../assets/vendor/icon-hs/style.css">
+  <link rel="stylesheet" href="../../assets/vendor/animate.css">
+  <link rel="stylesheet" href="../../assets/vendor/dzsparallaxer/dzsparallaxer.css">
+  <link rel="stylesheet" href="../../assets/vendor/dzsparallaxer/dzsscroller/scroller.css">
+  <link rel="stylesheet" href="../../assets/vendor/dzsparallaxer/advancedscroller/plugin.css">
+  <link rel="stylesheet" href="../../assets/vendor/hs-megamenu/src/hs.megamenu.css">
+  <link rel="stylesheet" href="../../assets/vendor/hamburgers/hamburgers.min.css">
+
+  <!-- CSS Unify -->
+  <link rel="stylesheet" href="../../assets/css/unify-core.css">
+  <link rel="stylesheet" href="../../assets/css/unify-components.css">
+  <link rel="stylesheet" href="../../assets/css/unify-globals.css">
+
+  <!-- CSS Customization -->
+  <link rel="stylesheet" href="../../assets/css/custom.css">
+</head>
+
+<body>
+  <main>
+
+
+
+    <!-- Header -->
+    <header id="js-header" class="u-header u-header--static">
+      <div class="u-header__section u-header__section--light g-bg-gray-light-v5 g-transition-0_3 g-py-10">
+        <nav class="js-mega-menu navbar navbar-expand-lg hs-menu-initialized hs-menu-horizontal">
+          <div class="container">
+            <!-- Responsive Toggle Button -->
+            <button class="navbar-toggler navbar-toggler-right btn g-line-height-1 g-brd-none g-pa-0 g-pos-abs g-top-minus-3 g-right-0" type="button" aria-label="Toggle navigation" aria-expanded="false" aria-controls="navBar" data-toggle="collapse" data-target="#navBar">
+              <span class="hamburger hamburger--slider">
+            <span class="hamburger-box">
+              <span class="hamburger-inner"></span>
+              </span>
+              </span>
+            </button>
+            <!-- End Responsive Toggle Button -->
+
+            <!-- Logo -->
+            <a href="/" class="navbar-brand d-flex">
+              <img src="assets/ml_fingerprint_logo.png" height="60px">
+            </a>
+            <!-- End Logo -->
+
+            <!-- Navigation -->
+            <div class="collapse navbar-collapse align-items-center flex-sm-row g-pt-10 g-pt-5--lg g-mr-40--lg" id="navBar">
+              <ul class="navbar-nav text-uppercase g-pos-rel g-font-weight-600 ml-auto">
+                <!-- Index -->
+                <li class="nav-item g-mx-10--lg g-mx-15--xl {% block css_index_active %}{% endblock %}">
+                  <a href="/" class="nav-link g-py-7 g-px-0">Index</a>
+                </li>
+                <!-- End Index -->
+
+                <!-- Documentation -->
+                <li class="nav-item  g-mx-10--lg g-mx-15--xl {% block css_docs_active %}{% endblock %}">
+                  <a href="/docs" class="nav-link g-py-7 g-px-0">Documentation</a>
+                </li>
+                <!-- End Documentation -->
+
+                <!-- Model List -->
+                <li class="nav-item  g-mx-10--lg g-mx-15--xl {% block css_modellist_active %}{% endblock %}">
+                  <a href="/modellist" class="nav-link g-py-7 g-px-0">Model List</a>
+                </li>
+                <!-- End Model List -->
+                {% if login %}
+                  <!-- Login -->
+                  <li class="nav-item  g-mx-10--lg g-mx-15--xl {% block css_login_active %}{% endblock %}">
+                    <a href="/login" class="nav-link g-py-7 g-px-0">Sign in with Google</a>
+                  </li>
+                  <!-- End Login -->
+                {% else %}
+                  <!-- User -->
+                  <li class="nav-item  g-mx-10--lg g-mx-15--xl {% block css_profile_active %}{% endblock %}">
+                    <a href="/profile" class="nav-link g-py-7 g-px-0">{{user.name}}</a>
+                  </li>
+                  <!-- End User -->
+                  <!-- Logout -->
+                  <li class="nav-item  g-mx-10--lg g-mx-15--xl">
+                    <a href="/logout" class="nav-link g-py-7 g-px-0">Logout</a>
+                  </li>
+                  <!-- End Logout -->
+                {% endif %}
+              </ul>
+            </div>
+            <!-- End Navigation -->
+
+          </div>
+        </nav>
+      </div>
+    </header>
+    <!-- End Header -->
+
+    <!-- Page Title -->
+      <section class="dzsparallaxer auto-init height-is-based-on-content use-loading mode-scroll loaded dzsprx-readyall" data-options="{direction: 'reverse', settings_mode_oneelement_max_offset: '150'}">
+        <!-- Parallax Image -->
+        <div class="divimage dzsparallaxer--target w-100 g-bg-size-cover" style="height: 130%; background-color: #133118;"></div>
+        <!-- End Parallax Image -->
+
+        <div class="container text-centers g-z-index-1 g-py-1">
+          <h1 class="g-color-white g-font-weight-700 g-font-size-80"></h1>
+        </div>
+      </section>
+    <!-- End Page Title -->
+
+    {% block content %}{% endblock %}
+
+    
+
+    <!-- Copyright Footer -->
+    <footer class="g-bg-gray-dark-v1 g-color-white-opacity-0_8 g-py-20">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-8 text-center text-md-left g-mb-10 g-mb-0--md">
+            <div class="d-lg-flex">
+              <small class="d-block g-font-size-default g-mr-10 g-mb-10 g-mb-0--md">2021 &copy; All Rights Reserved.</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <!-- End Copyright Footer -->
+    <a class="js-go-to u-go-to-v1" href="#" data-type="fixed" data-position='{
+     "bottom": 15,
+     "right": 15
+   }' data-offset-top="400" data-compensation="#js-header" data-show-effect="zoomIn">
+      <i class="hs-icon hs-icon-arrow-top"></i>
+    </a>
+  </main>
+
+  <div class="u-outer-spaces-helper"></div>
+
+
+  <!-- JS Global Compulsory -->
+  <script src="../../assets/vendor/jquery/jquery.min.js"></script>
+  <script src="../../assets/vendor/jquery-migrate/jquery-migrate.min.js"></script>
+  <script src="../../assets/vendor/popper.js/popper.min.js"></script>
+  <script src="../../assets/vendor/bootstrap/bootstrap.min.js"></script>
+
+
+  <!-- JS Implementing Plugins -->
+  <script src="../../assets/vendor/hs-megamenu/src/hs.megamenu.js"></script>
+  <script src="../../assets/vendor/dzsparallaxer/dzsparallaxer.js"></script>
+  <script src="../../assets/vendor/dzsparallaxer/dzsscroller/scroller.js"></script>
+  <script src="../../assets/vendor/dzsparallaxer/advancedscroller/plugin.js"></script>
+
+  <!-- JS Unify -->
+  <script src="../../assets/js/hs.core.js"></script>
+  <script src="../../assets/js/components/hs.header.js"></script>
+  <script src="../../assets/js/helpers/hs.hamburgers.js"></script>
+  <script src="../../assets/js/components/hs.tabs.js"></script>
+  <script src="../../assets/js/components/hs.go-to.js"></script>
+
+  <!-- JS Customization -->
+  <script src="../../assets/js/custom.js"></script>
+
+  <!-- JS Plugins Init. -->
+  <script>
+    $(document).on('ready', function () {
+        // initialization of go to
+        $.HSCore.components.HSGoTo.init('.js-go-to');
+
+        // initialization of tabs
+        $.HSCore.components.HSTabs.init('[role="tablist"]');
+        {% block onstartscripts %}{% endblock %}
+      });
+
+      $(window).on('load', function () {
+        // initialization of header
+        $.HSCore.components.HSHeader.init($('#js-header'));
+        $.HSCore.helpers.HSHamburgers.init('.hamburger');
+
+        // initialization of HSMegaMenu component
+        $('.js-mega-menu').HSMegaMenu({
+          event: 'hover',
+          pageContainer: $('.container'),
+          breakpoint: 991
+        });
+      });
+
+      $(window).on('resize', function () {
+        setTimeout(function () {
+          $.HSCore.components.HSTabs.init('[role="tablist"]');
+        }, 200);
+      });
+  </script>
+
+  {% block scripts %}{% endblock %}
+
+
+</body>
+
+</html>
