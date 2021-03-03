@@ -205,3 +205,49 @@ def pokemon_clustering(n_clusters=4):
         groups.append(dataset.iloc[km.labels_ == k])
 
     return km, groups
+
+
+def boston_regression(version=3):
+    '''
+    Regression model that tries to predict the price of housing in Boston
+    through some variables.
+    The dataset is taken from Kaggle and can be found here:
+    https://www.kaggle.com/rounakbanik/pokemon
+    It consists of this data:
+    - RM: Average number of rooms
+    - LSTAT: % of lower status of population
+    - PTRATIO: Pupil-teacher ratio of town
+    - MEDV: Median value of housing
+
+    Parameters
+    ----------
+    version : int
+        Number of version of the model. Version 1 only includes LSTAT,
+        version 2 includes both LSTAT and RM, and version 3 includes 
+        LSTAT, RM and LSTAT squared.
+
+    Returns
+    -------
+    model : sklearn.linear_model.LinearRegression
+        The regression model, already trained.
+    score : float
+        R2 score of the model.
+    '''
+    df = pd.read_csv('datasets/housing.csv')
+
+    features = []
+    if version == 1:
+        features = [df.LSTAT]
+    elif version == 2:
+        features = [df.LSTAT, df.RM]
+    elif version == 3:
+        features = [df.LSTAT, df.RM, df.LSTAT.pow(2)]
+
+    X_train, X_test, y_train, y_test = train_test_split(pd.DataFrame(features).T.values, df.MEDV, test_size=0.3, random_state = 0)
+
+    model = LinearRegression().fit(X_train, y_train)
+    score = model.score(X_test, y_test)
+
+    return model, score
+
+
