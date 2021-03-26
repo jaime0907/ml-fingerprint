@@ -5,7 +5,7 @@ from sklearn.datasets import make_blobs
 from sklearn.svm import SVC
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, f1_score
 from sklearn.cluster import KMeans
 import csv
 import pandas as pd
@@ -80,8 +80,8 @@ def rain_classifier():
     -------
     model : sklearn.linear_model.LogisticRegression
         The classifier model, already trained and tested.
-    score : float
-        Fraction of test data that was correctly predicted.
+    scores : dict
+        Dictionary with accuracy and F1 score.
     '''
     dataset = pd.read_csv('datasets/weatherAUS.csv')
 
@@ -167,8 +167,12 @@ def rain_classifier():
 
     y_pred_test = model.predict(X_test)
 
-    score = accuracy_score(y_test, y_pred_test)
-    return model, score
+    accuracy = accuracy_score(y_test, y_pred_test)
+    y_testb = np.where(y_test == "No", 0, 1)
+    y_pred_testb = np.where(y_pred_test == "No", 0, 1)
+    f1 = f1_score(y_testb, y_pred_testb)
+    scores = {'Accuracy': accuracy, 'F':f1}
+    return model, scores
 
 
 def pokemon_clustering(n_clusters=4):
