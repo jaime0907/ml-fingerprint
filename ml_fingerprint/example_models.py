@@ -73,6 +73,7 @@ def rain_classifier():
     Linear classifier that predicts if it will rain tomorrow.
     The dataset is taken from Kaggle and can be found here:
     https://www.kaggle.com/jsphyg/weather-dataset-rattle-package
+    
     It consists of daily weather data in australian cities, and whether
     it rained the next day or not.
 
@@ -180,6 +181,7 @@ def pokemon_clustering(n_clusters=4):
     Clustering model that groups Pokémon in k different clusters.
     The dataset is taken from Kaggle and can be found here:
     https://www.kaggle.com/rounakbanik/pokemon
+
     It consists of all the data all Pokémon have in the games.
     We will only use the stats (HP, Attack, Defense, Special Attack, 
     Special Defense and Speed)
@@ -217,11 +219,12 @@ def boston_regression(version=3):
     through some variables.
     The dataset is taken from Kaggle and can be found here:
     https://www.kaggle.com/rounakbanik/pokemon
+
     It consists of this data:
-    - RM: Average number of rooms
-    - LSTAT: % of lower status of population
-    - PTRATIO: Pupil-teacher ratio of town
-    - MEDV: Median value of housing
+        - RM: Average number of rooms
+        - LSTAT: % of lower status of population
+        - PTRATIO: Pupil-teacher ratio of town
+        - MEDV: Median value of housing
 
     Parameters
     ----------

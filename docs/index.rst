@@ -7,8 +7,10 @@ Welcome to ml-fingerprint's documentation!
 ==========================================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 4
    :caption: Contents:
+   
+   source/modules
 
 
 

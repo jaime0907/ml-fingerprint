@@ -263,6 +263,26 @@ class RemoteServer():
             return data
 
 def encode_model(model):
+    '''
+    Takes a model, serializes it to bytes using pickle, and then
+    converts it into a base64 string.
+
+    Parameters
+    ----------
+    model : any sklearn estimator
+        The model to be serialized.
+
+    Returns
+    -------
+    b64string_model : str
+        Base64 string that represents the serialized model.
+    serializer_bytes : str
+        Name of the package used to serialize the model into bytes.
+        In this case, it is always 'pickle'.
+    serializer_text : str
+        Name of the package used to convert the serialized bytes into text.
+        In this case, it is always 'base64'.
+    '''
     pickled_model = pickle.dumps(model)
     b64bytes_model = base64.b64encode(pickled_model)
     b64string_model = b64bytes_model.decode('ascii')
@@ -273,12 +293,41 @@ def encode_model(model):
     return b64string_model, serializer_bytes, serializer_text
 
 def decode_model(data):
+    '''
+    Takes a base64 string, converts it into bytes, and then
+    decodes it into a Python object (the model) using pickle.
+
+    Parameters
+    ----------
+    data : str
+        Base64 string that represents the serialized model.
+    
+    Returns
+    -------
+    model : any sklearn estimator
+        The model deserialized.
+    '''
     pickled_model = base64.b64decode(data)
     model = pickle.loads(pickled_model)
     return model
 
 
 def put_key_in_db(private_key, public_key):
+    '''
+    Deletes from the database the current key stored,
+    and inserts the new pair of keys provided.
+
+    Used only for test purposes. The private key should not
+    be stored in plain text in a SQL database.
+
+    Parameters
+    ----------
+    private_key : Crypto.PublicKey.RSA.RsaKey
+        The private half of the key.
+
+    public_key : Crypto.PublicKey.RSA.RsaKey
+        The public half of the key.
+    '''
     database = 'ml_fingerprint_database.db'
     conn = sqlite3.connect(database)
     c = conn.cursor()
