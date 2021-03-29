@@ -1,0 +1,287 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>poc.test_local_models &mdash; ml-fingerprint</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> ml-fingerprint
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../source/modules.html">ml_fingerprint</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ml-fingerprint</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>poc.test_local_models</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for poc.test_local_models</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">ml_fingerprint</span> <span class="kn">import</span> <span class="n">ml_fingerprint</span><span class="p">,</span> <span class="n">example_models</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LinearRegression</span>
+<span class="kn">from</span> <span class="nn">Crypto.PublicKey</span> <span class="kn">import</span> <span class="n">RSA</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">import</span> <span class="nn">orjson</span>
+<span class="c1"># Tests to check if the decorator works when using ml-fingerprint as a package.</span>
+<span class="c1"># NOTE: It requires having the ml-fingerprint installed.</span>
+
+<div class="viewcode-block" id="unaltered_test"><a class="viewcode-back" href="../../docs/source/poc.html#poc.test_local_models.unaltered_test">[docs]</a><span class="k">def</span> <span class="nf">unaltered_test</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+    <span class="c1"># This test gets a model, adds the fingerprint methods, signs the model and then tries to verify it.</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Starting unaltered test...&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Adding the verification methods to the BaseEstimator class</span>
+    <span class="n">ml_fingerprint</span><span class="o">.</span><span class="n">decorate_base_estimator</span><span class="p">()</span>
+
+    <span class="c1"># Checking if it works</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">hello_world</span><span class="p">()</span>
+
+    <span class="c1"># Signing the model after it has been trained</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+    <span class="c1"># Verifying the model</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">verify</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">publickey</span><span class="p">())</span>
+    <span class="nb">print</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="altered_test"><a class="viewcode-back" href="../../docs/source/poc.html#poc.test_local_models.altered_test">[docs]</a><span class="k">def</span> <span class="nf">altered_test</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+    <span class="c1"># This test gets a model, adds the fingerprint methods, signs the model, MODIFIES IT and then tries to verify it.</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Starting altered test...&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Adding the verification methods to the BaseEstimator class</span>
+    <span class="n">ml_fingerprint</span><span class="o">.</span><span class="n">decorate_base_estimator</span><span class="p">()</span>
+    <span class="c1"># Signing the model BEFORE it has been trained</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+    <span class="c1"># Modifying the model</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">model</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;SVC&#39;</span><span class="p">:</span>
+        <span class="n">model</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s1">&#39;dual_coef_&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mf">4.0</span>
+    <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">model</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;LinearRegression&#39;</span><span class="p">:</span>
+        <span class="n">model</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s1">&#39;coef_&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mf">4.0</span>
+    <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">model</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;LogisticRegression&#39;</span><span class="p">:</span>
+        <span class="n">model</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s1">&#39;coef_&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mf">4.0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;altered_test() failed. The given model isn&#39;t compatible with this test.&quot;</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="c1"># Checking if it works</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">hello_world</span><span class="p">()</span>
+
+    <span class="c1"># Verifying the model (that has been signed before training, and therefore, should not verify)</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">verify</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">publickey</span><span class="p">())</span>
+    <span class="nb">print</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="unsigned_test"><a class="viewcode-back" href="../../docs/source/poc.html#poc.test_local_models.unsigned_test">[docs]</a><span class="k">def</span> <span class="nf">unsigned_test</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+    <span class="c1"># This test gets a model, adds the fingerprint methods, DOESN&#39;T sign the model and then tries to verify it.</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Starting unsigned test...&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Adding the verification methods to the BaseEstimator class</span>
+    <span class="n">ml_fingerprint</span><span class="o">.</span><span class="n">decorate_base_estimator</span><span class="p">()</span>
+
+    <span class="c1"># Checking if it works</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">hello_world</span><span class="p">()</span>
+
+    <span class="c1"># Verifying the model</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">verify</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">publickey</span><span class="p">())</span>
+    <span class="nb">print</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="main_function"><a class="viewcode-back" href="../../docs/source/poc.html#poc.test_local_models.main_function">[docs]</a><span class="k">def</span> <span class="nf">main_function</span><span class="p">():</span>
+    <span class="c1"># Generate the RSA key used to sign and verify the model</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="n">RSA</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="mi">2048</span><span class="p">)</span>
+
+    <span class="c1"># Get a model from the example_models.py file</span>
+    <span class="c1">#model = example_models.vanderplas_regression()</span>
+    <span class="n">model</span><span class="p">,</span> <span class="n">score</span> <span class="o">=</span> <span class="n">example_models</span><span class="o">.</span><span class="n">rain_classifier</span><span class="p">()</span>
+    <span class="c1">### model = example_models.vanderplas_classifier()</span>
+
+    <span class="c1"># Do all the tests</span>
+    
+    <span class="c1">#unsigned_test(model, key)</span>
+    <span class="n">unaltered_test</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+    <span class="n">altered_test</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span></div>
+    
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main_function</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Jaime Solsona
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

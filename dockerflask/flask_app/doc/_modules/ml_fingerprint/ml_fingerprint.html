@@ -1,0 +1,329 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ml_fingerprint.ml_fingerprint &mdash; ml-fingerprint</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> ml-fingerprint
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../source/modules.html">ml_fingerprint</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ml-fingerprint</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>ml_fingerprint.ml_fingerprint</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for ml_fingerprint.ml_fingerprint</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">base</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span> <span class="c1"># This convenience func preserves name and docstring</span>
+<span class="kn">import</span> <span class="nn">orjson</span>
+<span class="kn">from</span> <span class="nn">Crypto.PublicKey</span> <span class="kn">import</span> <span class="n">RSA</span>
+<span class="kn">from</span> <span class="nn">Crypto.Hash</span> <span class="kn">import</span> <span class="n">SHA256</span>
+<span class="kn">from</span> <span class="nn">Crypto.Signature</span> <span class="kn">import</span> <span class="n">pkcs1_15</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">exceptions</span>
+
+
+<div class="viewcode-block" id="decorate_base_estimator"><a class="viewcode-back" href="../../source/ml_fingerprint.html#ml_fingerprint.ml_fingerprint.decorate_base_estimator">[docs]</a><span class="k">def</span> <span class="nf">decorate_base_estimator</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    This function should be called by the user on their code.</span>
+<span class="sd">    It adds the sign and verification methods to scikit&#39;s BaseEstimator class, making them avaliable in all scikit&#39;s estimators.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">baseClass</span> <span class="o">=</span> <span class="n">base</span><span class="o">.</span><span class="n">BaseEstimator</span>
+
+    <span class="k">def</span> <span class="nf">sign</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">private_key</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Takes a RSA private key and signs the model with it.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        private_key : Crypto.PublicKey.RSA.RsaKey</span>
+<span class="sd">            The private key you want to sign the model with.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bytes</span>
+<span class="sd">            The signature of the model.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Signing model...&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">ml_fingerprint_data</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="c1"># Make a copy of the model and delete all ml-fingerprint extra data (the signature and the excluded attributes) so they don&#39;t affect the hash.</span>
+        <span class="c1"># This is necessary because when adding our data we are modifying the model, so the hash done when verifying won&#39;t be the same as the one used to sign the model.</span>
+        <span class="n">modelcopy</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">modelcopy</span><span class="p">,</span> <span class="s1">&#39;ml_fingerprint_data&#39;</span><span class="p">):</span>
+            <span class="k">del</span> <span class="n">modelcopy</span><span class="o">.</span><span class="n">ml_fingerprint_data</span>
+
+        <span class="c1"># Checks for any attribute not compatible with orjson (mainly numpy arrays with non-standard data in them).</span>
+        <span class="c1"># If any attribute cannot be json serialized, it excludes it from the serialization.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ml_fingerprint_data</span><span class="p">[</span><span class="s1">&#39;excluded_data&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">modelcopy</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">orjson</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">modelcopy</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">option</span><span class="o">=</span><span class="n">orjson</span><span class="o">.</span><span class="n">OPT_SERIALIZE_NUMPY</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ml_fingerprint_data</span><span class="p">[</span><span class="s1">&#39;excluded_data&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        
+        <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ml_fingerprint_data</span><span class="p">[</span><span class="s1">&#39;excluded_data&#39;</span><span class="p">]:</span>
+            <span class="nb">delattr</span><span class="p">(</span><span class="n">modelcopy</span><span class="p">,</span> <span class="n">elem</span><span class="p">)</span>
+
+        <span class="c1"># Serializes the model parameters using orjson, which provides native numpy compatibility</span>
+        <span class="n">serialized_model</span> <span class="o">=</span> <span class="n">orjson</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">modelcopy</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">,</span> <span class="n">option</span><span class="o">=</span><span class="n">orjson</span><span class="o">.</span><span class="n">OPT_SERIALIZE_NUMPY</span><span class="p">)</span>
+
+        <span class="c1"># Hashes the serialized model using SHA256 algorithm</span>
+        <span class="n">hashed_model</span> <span class="o">=</span> <span class="n">SHA256</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">serialized_model</span><span class="p">)</span>
+
+        <span class="c1"># Signs the hashed model with the provided private key and then adds the signature to the model object</span>
+        <span class="n">signature</span> <span class="o">=</span> <span class="n">pkcs1_15</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">private_key</span><span class="p">)</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">hashed_model</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ml_fingerprint_data</span><span class="p">[</span><span class="s1">&#39;signature&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">signature</span>
+        <span class="k">return</span> <span class="n">signature</span>
+
+    <span class="c1"># Manually add the sign() method, because it need access to self</span>
+    <span class="nb">setattr</span><span class="p">(</span><span class="n">baseClass</span><span class="p">,</span> <span class="n">sign</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">sign</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">verify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">public_key</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Takes a RSA public key and verifies the model with it.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        public_key : Crypto.PublicKey.RSA.RsaKey</span>
+<span class="sd">            The public key you want to verify the model with.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if verification succeded. If not, it will raise and exception</span>
+<span class="sd">            depending on the cause of the fail.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Validating model...&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;ml_fingerprint_data&#39;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">ModelNotSigned</span><span class="p">(</span><span class="s2">&quot;This model has not been signed.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Make a copy of the model and delete ml-fingerprint data so the hash fits the one generated in sign()</span>
+        <span class="n">modelcopy</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">modelcopy</span><span class="p">,</span> <span class="s1">&#39;ml_fingerprint_data&#39;</span><span class="p">):</span>
+            <span class="k">del</span> <span class="n">modelcopy</span><span class="o">.</span><span class="n">ml_fingerprint_data</span>
+
+        <span class="c1"># Deleting all excluded attributes from the copy so it won&#39;t serialize them.</span>
+        <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ml_fingerprint_data</span><span class="p">[</span><span class="s1">&#39;excluded_data&#39;</span><span class="p">]:</span>
+            <span class="nb">delattr</span><span class="p">(</span><span class="n">modelcopy</span><span class="p">,</span> <span class="n">elem</span><span class="p">)</span>
+
+        <span class="c1"># Serializes the model parameters using orjson, which provides native numpy compatibility</span>
+        <span class="n">serialized_model</span> <span class="o">=</span> <span class="n">orjson</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">modelcopy</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">,</span> <span class="n">option</span><span class="o">=</span><span class="n">orjson</span><span class="o">.</span><span class="n">OPT_SERIALIZE_NUMPY</span><span class="p">)</span>
+
+        <span class="c1"># Hashes the serialized model using SHA256 algorithm</span>
+        <span class="n">hashed_model</span> <span class="o">=</span> <span class="n">SHA256</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">serialized_model</span><span class="p">)</span>
+
+        <span class="c1"># Tries to verify the model with its signature and the public key provided.</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">pkcs1_15</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">public_key</span><span class="p">)</span><span class="o">.</span><span class="n">verify</span><span class="p">(</span><span class="n">hashed_model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ml_fingerprint_data</span><span class="p">[</span><span class="s1">&#39;signature&#39;</span><span class="p">])</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The signature is valid&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">VerificationError</span><span class="p">(</span><span class="s2">&quot;The signature is NOT valid.&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">ModelNotSigned</span><span class="p">(</span><span class="s2">&quot;This model has not been signed.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Manually add the verify() method, because it need access to self</span>
+    <span class="nb">setattr</span><span class="p">(</span><span class="n">baseClass</span><span class="p">,</span> <span class="n">verify</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">verify</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="isInyected"><a class="viewcode-back" href="../../source/ml_fingerprint.html#ml_fingerprint.ml_fingerprint.isInyected">[docs]</a><span class="k">def</span> <span class="nf">isInyected</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Function used to check if a scikit model has been inyected with ml-fingerprint methods</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model : any sklearn estimator</span>
+<span class="sd">        The scikit-learn model you want to check if is inyected with sign() and verify() methods.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">        True if the model has been previously inyected, False otherwise.</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s1">&#39;sign&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Jaime Solsona
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
