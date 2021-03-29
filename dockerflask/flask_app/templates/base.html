@@ -59,7 +59,7 @@
             <!-- End Responsive Toggle Button -->
 
             <!-- Logo -->
-            <a href="/" class="navbar-brand d-flex">
+            <a href="/mlfingerprint" class="navbar-brand d-flex">
               <img src="assets/ml_fingerprint_logo.png" height="60px">
             </a>
             <!-- End Logo -->
@@ -69,36 +69,36 @@
               <ul class="navbar-nav text-uppercase g-pos-rel g-font-weight-600 ml-auto">
                 <!-- Index -->
                 <li class="nav-item g-mx-10--lg g-mx-15--xl {% block css_index_active %}{% endblock %}">
-                  <a href="/" class="nav-link g-py-7 g-px-0">Index</a>
+                  <a href="/mlfingerprint" class="nav-link g-py-7 g-px-0">Index</a>
                 </li>
                 <!-- End Index -->
 
                 <!-- Documentation -->
                 <li class="nav-item  g-mx-10--lg g-mx-15--xl {% block css_docs_active %}{% endblock %}">
-                  <a href="/docs/" class="nav-link g-py-7 g-px-0">Documentation</a>
+                  <a href="docs/" class="nav-link g-py-7 g-px-0">Documentation</a>
                 </li>
                 <!-- End Documentation -->
 
                 <!-- Model List -->
                 <li class="nav-item  g-mx-10--lg g-mx-15--xl {% block css_modellist_active %}{% endblock %}">
-                  <a href="/modellist" class="nav-link g-py-7 g-px-0">Model List</a>
+                  <a href="modellist" class="nav-link g-py-7 g-px-0">Model List</a>
                 </li>
                 <!-- End Model List -->
                 {% if login %}
                   <!-- Login -->
                   <li class="nav-item  g-mx-10--lg g-mx-15--xl {% block css_login_active %}{% endblock %}">
-                    <a href="/login" class="nav-link g-py-7 g-px-0">Sign in with Google</a>
+                    <a href="login" class="nav-link g-py-7 g-px-0">Sign in with Google</a>
                   </li>
                   <!-- End Login -->
                 {% else %}
                   <!-- User -->
                   <li class="nav-item  g-mx-10--lg g-mx-15--xl {% block css_profile_active %}{% endblock %}">
-                    <a href="/profile" class="nav-link g-py-7 g-px-0">{{user.name}}</a>
+                    <a href="profile" class="nav-link g-py-7 g-px-0">{{user.name}}</a>
                   </li>
                   <!-- End User -->
                   <!-- Logout -->
                   <li class="nav-item  g-mx-10--lg g-mx-15--xl">
-                    <a href="/logout" class="nav-link g-py-7 g-px-0">Logout</a>
+                    <a href="logout" class="nav-link g-py-7 g-px-0">Logout</a>
                   </li>
                   <!-- End Logout -->
                 {% endif %}
