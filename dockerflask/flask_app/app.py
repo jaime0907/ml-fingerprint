@@ -330,17 +330,6 @@ def get_modellist(modelname=None):
             model['date'] = date_str
         return render_template('list.html', modelcount=len(model_list), modellist=model_list, login=login, user=user)
 
-@server.route('/docs', defaults = {'filename': 'index.html'})
-@server.route('/docs/<path:filename>', defaults={'static': True})
-def docs(filename):
-    path = os.path.join(filename)
-    return server.send_static_file(path)
-
-@server.route('/<path:filename>', defaults={'static': True})
-def staticassets(filename):
-    path = os.path.join(filename)
-    return server.send_static_file(path)
-
 
 #if __name__ == '__main__':
 #    app.run(debug=True, host='0.0.0.0', port=5000, ssl_context=('cert.pem', 'key.pem'), threaded=True)

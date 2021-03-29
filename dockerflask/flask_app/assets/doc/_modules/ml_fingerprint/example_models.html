@@ -1,0 +1,458 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ml_fingerprint.example_models &mdash; ml-fingerprint</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> ml-fingerprint
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../source/modules.html">ml_fingerprint</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ml-fingerprint</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>ml_fingerprint.example_models</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for ml_fingerprint.example_models</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LinearRegression</span>
+<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LogisticRegression</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">sklearn.datasets</span> <span class="kn">import</span> <span class="n">make_blobs</span>
+<span class="kn">from</span> <span class="nn">sklearn.svm</span> <span class="kn">import</span> <span class="n">SVC</span>
+<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">MinMaxScaler</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">accuracy_score</span><span class="p">,</span> <span class="n">f1_score</span>
+<span class="kn">from</span> <span class="nn">sklearn.cluster</span> <span class="kn">import</span> <span class="n">KMeans</span>
+<span class="kn">import</span> <span class="nn">csv</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+
+<div class="viewcode-block" id="vanderplas_regression"><a class="viewcode-back" href="../../source/ml_fingerprint.html#ml_fingerprint.example_models.vanderplas_regression">[docs]</a><span class="k">def</span> <span class="nf">vanderplas_regression</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Example linear regressor taken from &quot;Python Data Science Handbook&quot;, by Jake VanderPlas.</span>
+<span class="sd">    The training points follow the function y = -2x + z, with an added noise.</span>
+<span class="sd">    The regressor then tries to predict the value of y based on x and z values.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    sklearn.linear_model.LinearRegression</span>
+<span class="sd">        The linear regressor model described above.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1">#Create the model</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">()</span>
+    <span class="c1"># Create some data for the regression</span>
+    <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">rng</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="c1"># fit the regression model</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="c1"># create some new points to predict</span>
+    <span class="n">X2</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="c1"># predict the labels</span>
+    <span class="n">y2</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X2</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">model</span></div>
+
+<div class="viewcode-block" id="vanderplas_classifier"><a class="viewcode-back" href="../../source/ml_fingerprint.html#ml_fingerprint.example_models.vanderplas_classifier">[docs]</a><span class="k">def</span> <span class="nf">vanderplas_classifier</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Example classifier taken from &quot;Python Data Science Handbook&quot;, by Jake VanderPlas.</span>
+<span class="sd">    The training points are taken from scikit-learn make_blobs function, which generates</span>
+<span class="sd">    points around N center points, in this case N=2 centers.</span>
+<span class="sd">    The classifier then tries to predict if a points belongs to one center or the other.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    sklearn.svm.SVC</span>
+<span class="sd">        The C-Support Vector Classification (SVC) model described above.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># create 50 separable points</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">make_blobs</span><span class="p">(</span><span class="n">n_samples</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">centers</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                    <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">cluster_std</span><span class="o">=</span><span class="mf">0.60</span><span class="p">)</span>
+
+    <span class="c1"># fit the support vector classifier model</span>
+    <span class="n">clf</span> <span class="o">=</span> <span class="n">SVC</span><span class="p">(</span><span class="n">kernel</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">)</span>
+    <span class="n">clf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+    <span class="c1"># create some new points to predict</span>
+    <span class="n">X2</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">make_blobs</span><span class="p">(</span><span class="n">n_samples</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span> <span class="n">centers</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                    <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">cluster_std</span><span class="o">=</span><span class="mf">0.80</span><span class="p">)</span>
+    <span class="n">X2</span> <span class="o">=</span> <span class="n">X2</span><span class="p">[</span><span class="mi">50</span><span class="p">:]</span>
+
+    <span class="c1"># predict the labels</span>
+    <span class="n">y2</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">clf</span></div>
+
+<div class="viewcode-block" id="rain_classifier"><a class="viewcode-back" href="../../source/ml_fingerprint.html#ml_fingerprint.example_models.rain_classifier">[docs]</a><span class="k">def</span> <span class="nf">rain_classifier</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Linear classifier that predicts if it will rain tomorrow.</span>
+<span class="sd">    The dataset is taken from Kaggle and can be found here:</span>
+<span class="sd">    https://www.kaggle.com/jsphyg/weather-dataset-rattle-package</span>
+<span class="sd">    </span>
+<span class="sd">    It consists of daily weather data in australian cities, and whether</span>
+<span class="sd">    it rained the next day or not.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    model : sklearn.linear_model.LogisticRegression</span>
+<span class="sd">        The classifier model, already trained and tested.</span>
+<span class="sd">    scores : dict</span>
+<span class="sd">        Dictionary with accuracy and F1 score.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">dataset</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;datasets/weatherAUS.csv&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Drop the RISK_MM column following the dataset owner recomendation for classifiers.</span>
+    <span class="n">dataset</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;RISK_MM&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Through recursive testing, we have determined that these columns have little to no impact</span>
+    <span class="c1"># on the precision of the model.</span>
+    <span class="c1"># The score only drops a mere 0.03% when deleting these columns, from 0.8495 to 0.8491.</span>
+    <span class="n">droppable_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;MinTemp&#39;</span><span class="p">,</span> <span class="s1">&#39;Evaporation&#39;</span><span class="p">,</span> <span class="s1">&#39;WindDir9am&#39;</span><span class="p">,</span> <span class="s1">&#39;WindSpeed9am&#39;</span><span class="p">,</span> <span class="s1">&#39;Temp3pm&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;RainToday&#39;</span><span class="p">,</span> <span class="s1">&#39;MaxTemp&#39;</span><span class="p">,</span> <span class="s1">&#39;Sunshine&#39;</span><span class="p">,</span> <span class="s1">&#39;WindGustDir&#39;</span><span class="p">,</span> <span class="s1">&#39;Humidity9am&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;Cloud9am&#39;</span><span class="p">,</span> <span class="s1">&#39;Temp9am&#39;</span><span class="p">,</span> <span class="s1">&#39;WindDir3pm&#39;</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">droppable_cols</span><span class="p">:</span>
+        <span class="n">dataset</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Dividing columns in numerical and categorical</span>
+    <span class="n">categorical</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">numerical</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">dataset</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">dataset</span><span class="o">.</span><span class="n">dtypes</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;O&#39;</span><span class="p">:</span>
+            <span class="n">categorical</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">numerical</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
+
+    <span class="c1"># Convert Date to separate year, month and day values</span>
+    <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;Year&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">year</span>
+    <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;Month&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">month</span>
+    <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;Day&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">day</span>
+    <span class="c1"># Drop Date column, as we don&#39;t need it anymore</span>
+    <span class="n">dataset</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">categorical</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;Date&#39;</span><span class="p">)</span>
+    <span class="n">numerical</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;Year&#39;</span><span class="p">)</span>
+    <span class="n">numerical</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;Month&#39;</span><span class="p">)</span>
+    <span class="n">numerical</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;Day&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Limiting all numerical outliers to a maximum value, set to 3 interquantile ranges (IQR) starting from 75%.</span>
+    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">numerical</span><span class="p">:</span>
+        <span class="n">IQR</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="mf">0.75</span><span class="p">)</span> <span class="o">-</span> <span class="n">dataset</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="mf">0.25</span><span class="p">)</span>
+        <span class="n">max_outlier</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="mf">0.75</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">IQR</span> <span class="o">*</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="c1">#print(col + &quot;, max: &quot; + str(max_outlier) + &quot;, count: &quot; + str(np.where(dataset[col]&gt;max_outlier, 1, 0).sum()))</span>
+        <span class="n">dataset</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">&gt;</span><span class="n">max_outlier</span><span class="p">,</span> <span class="n">max_outlier</span><span class="p">,</span> <span class="n">dataset</span><span class="p">[</span><span class="n">col</span><span class="p">])</span>
+    
+    <span class="c1"># Fill the NaN numerical values with median</span>
+    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">numerical</span><span class="p">:</span>
+        <span class="n">col_median</span><span class="o">=</span><span class="n">dataset</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">median</span><span class="p">()</span>
+        <span class="n">dataset</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">col_median</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        
+    <span class="c1"># Fill the NaN categorical values with mode</span>
+    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">categorical</span><span class="p">:</span>
+        <span class="n">dataset</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">mode</span><span class="p">()[</span><span class="mi">0</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Setting Y value as whether if it will rain tomorrow or not, and dropping it from main dataset.</span>
+    <span class="n">Y</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;RainTomorrow&#39;</span><span class="p">]</span>
+    <span class="n">dataset</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;RainTomorrow&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">categorical</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;RainTomorrow&#39;</span><span class="p">)</span>
+
+
+    <span class="c1"># Setting X value as all the other columns, converting the categorical ones into dummy values </span>
+    <span class="c1"># Dummy values are binary columns for each category in the original column, for whether the row </span>
+    <span class="c1"># belongs to that category or not.</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="n">numerical</span><span class="p">]</span>
+    <span class="n">list_X</span> <span class="o">=</span> <span class="p">[</span><span class="n">X</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">categorical</span><span class="p">:</span>
+        <span class="n">list_X</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="n">col</span><span class="p">]))</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">list_X</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># Normalize all data</span>
+    <span class="n">cols</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">columns</span>
+    <span class="n">scaler</span> <span class="o">=</span> <span class="n">MinMaxScaler</span><span class="p">()</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="n">cols</span><span class="p">])</span>
+
+    <span class="c1"># Split X and Y data into train and test, with a 70%/30% ratio.</span>
+    <span class="c1"># This also randomizes the data order before splitting the top 70% and the last 30%.</span>
+    <span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">test_size</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">,</span> <span class="n">random_state</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># instantiate the model</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">LogisticRegression</span><span class="p">(</span><span class="n">solver</span><span class="o">=</span><span class="s1">&#39;liblinear&#39;</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+
+    <span class="c1"># fit the model</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+    <span class="n">y_pred_test</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+    <span class="n">accuracy</span> <span class="o">=</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred_test</span><span class="p">)</span>
+    <span class="n">y_testb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">y_test</span> <span class="o">==</span> <span class="s2">&quot;No&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">y_pred_testb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">y_pred_test</span> <span class="o">==</span> <span class="s2">&quot;No&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">f1</span> <span class="o">=</span> <span class="n">f1_score</span><span class="p">(</span><span class="n">y_testb</span><span class="p">,</span> <span class="n">y_pred_testb</span><span class="p">)</span>
+    <span class="n">scores</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Accuracy&#39;</span><span class="p">:</span> <span class="n">accuracy</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">:</span><span class="n">f1</span><span class="p">}</span>
+    <span class="k">return</span> <span class="n">model</span><span class="p">,</span> <span class="n">scores</span></div>
+
+
+<div class="viewcode-block" id="pokemon_clustering"><a class="viewcode-back" href="../../source/ml_fingerprint.html#ml_fingerprint.example_models.pokemon_clustering">[docs]</a><span class="k">def</span> <span class="nf">pokemon_clustering</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Clustering model that groups Pokémon in k different clusters.</span>
+<span class="sd">    The dataset is taken from Kaggle and can be found here:</span>
+<span class="sd">    https://www.kaggle.com/rounakbanik/pokemon</span>
+
+<span class="sd">    It consists of all the data all Pokémon have in the games.</span>
+<span class="sd">    We will only use the stats (HP, Attack, Defense, Special Attack, </span>
+<span class="sd">    Special Defense and Speed)</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    n_clusters : int</span>
+<span class="sd">        Number of clusters (k) to divide and group the Pokémon.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    model : sklearn.linear_model.LogisticRegression</span>
+<span class="sd">        The clustering model, already trained.</span>
+<span class="sd">    groups: list</span>
+<span class="sd">        List of k datasets, which will contain all the data</span>
+<span class="sd">        for each Pokémon in that group.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">dataset</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;datasets/pokemon.csv&#39;</span><span class="p">)</span>
+
+    <span class="n">stats</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;hp&#39;</span><span class="p">,</span> <span class="s1">&#39;attack&#39;</span><span class="p">,</span> <span class="s1">&#39;defense&#39;</span><span class="p">,</span> <span class="s1">&#39;sp_attack&#39;</span><span class="p">,</span> <span class="s1">&#39;sp_defense&#39;</span><span class="p">,</span> <span class="s1">&#39;speed&#39;</span><span class="p">]</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="n">stats</span><span class="p">]</span>
+    <span class="n">km</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="n">n_clusters</span><span class="p">)</span>
+    <span class="n">km</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+    <span class="n">groups</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_clusters</span><span class="p">):</span>
+        <span class="n">groups</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">km</span><span class="o">.</span><span class="n">labels_</span> <span class="o">==</span> <span class="n">k</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">km</span><span class="p">,</span> <span class="n">groups</span></div>
+
+
+<div class="viewcode-block" id="boston_regression"><a class="viewcode-back" href="../../source/ml_fingerprint.html#ml_fingerprint.example_models.boston_regression">[docs]</a><span class="k">def</span> <span class="nf">boston_regression</span><span class="p">(</span><span class="n">version</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Regression model that tries to predict the price of housing in Boston</span>
+<span class="sd">    through some variables.</span>
+<span class="sd">    The dataset is taken from Kaggle and can be found here:</span>
+<span class="sd">    https://www.kaggle.com/rounakbanik/pokemon</span>
+
+<span class="sd">    It consists of this data:</span>
+<span class="sd">        - RM: Average number of rooms</span>
+<span class="sd">        - LSTAT: % of lower status of population</span>
+<span class="sd">        - PTRATIO: Pupil-teacher ratio of town</span>
+<span class="sd">        - MEDV: Median value of housing</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    version : int</span>
+<span class="sd">        Number of version of the model. Version 1 only includes LSTAT,</span>
+<span class="sd">        version 2 includes both LSTAT and RM, and version 3 includes </span>
+<span class="sd">        LSTAT, RM and LSTAT squared.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    model : sklearn.linear_model.LinearRegression</span>
+<span class="sd">        The regression model, already trained.</span>
+<span class="sd">    score : float</span>
+<span class="sd">        R2 score of the model.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;datasets/housing.csv&#39;</span><span class="p">)</span>
+
+    <span class="n">features</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">version</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">features</span> <span class="o">=</span> <span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">LSTAT</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">version</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">features</span> <span class="o">=</span> <span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">LSTAT</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">RM</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">version</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">features</span> <span class="o">=</span> <span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">LSTAT</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">RM</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">LSTAT</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">)]</span>
+
+    <span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">features</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">MEDV</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">random_state</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+    <span class="n">score</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">model</span><span class="p">,</span> <span class="n">score</span></div>
+
+
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Jaime Solsona
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

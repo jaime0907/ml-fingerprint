@@ -1,0 +1,539 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ml_fingerprint package &mdash; ml-fingerprint</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> ml-fingerprint
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">ml_fingerprint package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-ml_fingerprint.example_models">ml_fingerprint.example_models module</a></li>
+<li><a class="reference internal" href="#module-ml_fingerprint.exceptions">ml_fingerprint.exceptions module</a></li>
+<li><a class="reference internal" href="#module-ml_fingerprint.ml_fingerprint">ml_fingerprint.ml_fingerprint module</a></li>
+<li><a class="reference internal" href="#module-ml_fingerprint.remote">ml_fingerprint.remote module</a></li>
+<li><a class="reference internal" href="#module-ml_fingerprint">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ml-fingerprint</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>ml_fingerprint package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/docs/source/ml_fingerprint.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="ml-fingerprint-package">
+<h1>ml_fingerprint package<a class="headerlink" href="#ml-fingerprint-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-ml_fingerprint.example_models">
+<span id="ml-fingerprint-example-models-module"></span><h2>ml_fingerprint.example_models module<a class="headerlink" href="#module-ml_fingerprint.example_models" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="ml_fingerprint.example_models.boston_regression">
+<code class="sig-prename descclassname">ml_fingerprint.example_models.</code><code class="sig-name descname">boston_regression</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">version</span><span class="o">=</span><span class="default_value">3</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ml_fingerprint/example_models.html#boston_regression"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ml_fingerprint.example_models.boston_regression" title="Permalink to this definition">¶</a></dt>
+<dd><p>Regression model that tries to predict the price of housing in Boston
+through some variables.
+The dataset is taken from Kaggle and can be found here:
+<a class="reference external" href="https://www.kaggle.com/rounakbanik/pokemon">https://www.kaggle.com/rounakbanik/pokemon</a>
+It consists of this data:
+- RM: Average number of rooms
+- LSTAT: % of lower status of population
+- PTRATIO: Pupil-teacher ratio of town
+- MEDV: Median value of housing</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>version</strong> (<em>int</em>) – Number of version of the model. Version 1 only includes LSTAT,
+version 2 includes both LSTAT and RM, and version 3 includes
+LSTAT, RM and LSTAT squared.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>model</strong> (<em>sklearn.linear_model.LinearRegression</em>) – The regression model, already trained.</p></li>
+<li><p><strong>score</strong> (<em>float</em>) – R2 score of the model.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="ml_fingerprint.example_models.pokemon_clustering">
+<code class="sig-prename descclassname">ml_fingerprint.example_models.</code><code class="sig-name descname">pokemon_clustering</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n_clusters</span><span class="o">=</span><span class="default_value">4</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ml_fingerprint/example_models.html#pokemon_clustering"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ml_fingerprint.example_models.pokemon_clustering" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clustering model that groups Pokémon in k different clusters.
+The dataset is taken from Kaggle and can be found here:
+<a class="reference external" href="https://www.kaggle.com/rounakbanik/pokemon">https://www.kaggle.com/rounakbanik/pokemon</a>
+It consists of all the data all Pokémon have in the games.
+We will only use the stats (HP, Attack, Defense, Special Attack,
+Special Defense and Speed)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>n_clusters</strong> (<em>int</em>) – Number of clusters (k) to divide and group the Pokémon.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>model</strong> (<em>sklearn.linear_model.LogisticRegression</em>) – The clustering model, already trained.</p></li>
+<li><p><strong>groups</strong> (<em>list</em>) – List of k datasets, which will contain all the data
+for each Pokémon in that group.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="ml_fingerprint.example_models.rain_classifier">
+<code class="sig-prename descclassname">ml_fingerprint.example_models.</code><code class="sig-name descname">rain_classifier</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ml_fingerprint/example_models.html#rain_classifier"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ml_fingerprint.example_models.rain_classifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Linear classifier that predicts if it will rain tomorrow.
+The dataset is taken from Kaggle and can be found here:
+<a class="reference external" href="https://www.kaggle.com/jsphyg/weather-dataset-rattle-package">https://www.kaggle.com/jsphyg/weather-dataset-rattle-package</a>
+It consists of daily weather data in australian cities, and whether
+it rained the next day or not.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><strong>model</strong> (<em>sklearn.linear_model.LogisticRegression</em>) – The classifier model, already trained and tested.</p></li>
+<li><p><strong>scores</strong> (<em>dict</em>) – Dictionary with accuracy and F1 score.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="ml_fingerprint.example_models.vanderplas_classifier">
+<code class="sig-prename descclassname">ml_fingerprint.example_models.</code><code class="sig-name descname">vanderplas_classifier</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ml_fingerprint/example_models.html#vanderplas_classifier"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ml_fingerprint.example_models.vanderplas_classifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Example classifier taken from “Python Data Science Handbook”, by Jake VanderPlas.
+The training points are taken from scikit-learn make_blobs function, which generates
+points around N center points, in this case N=2 centers.
+The classifier then tries to predict if a points belongs to one center or the other.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The C-Support Vector Classification (SVC) model described above.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>sklearn.svm.SVC</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="ml_fingerprint.example_models.vanderplas_regression">
+<code class="sig-prename descclassname">ml_fingerprint.example_models.</code><code class="sig-name descname">vanderplas_regression</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ml_fingerprint/example_models.html#vanderplas_regression"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ml_fingerprint.example_models.vanderplas_regression" title="Permalink to this definition">¶</a></dt>
+<dd><p>Example linear regressor taken from “Python Data Science Handbook”, by Jake VanderPlas.
+The training points follow the function y = -2x + z, with an added noise.
+The regressor then tries to predict the value of y based on x and z values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The linear regressor model described above.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>sklearn.linear_model.LinearRegression</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ml_fingerprint.exceptions">
+<span id="ml-fingerprint-exceptions-module"></span><h2>ml_fingerprint.exceptions module<a class="headerlink" href="#module-ml_fingerprint.exceptions" title="Permalink to this headline">¶</a></h2>
+<dl class="py exception">
+<dt id="ml_fingerprint.exceptions.ModelNotSigned">
+<em class="property">exception </em><code class="sig-prename descclassname">ml_fingerprint.exceptions.</code><code class="sig-name descname">ModelNotSigned</code><a class="reference internal" href="../../_modules/ml_fingerprint/exceptions.html#ModelNotSigned"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ml_fingerprint.exceptions.ModelNotSigned" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Exception raised when trying to verify a model that hasn’t been signed,
+or has got its signature deleted.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt id="ml_fingerprint.exceptions.VerificationError">
+<em class="property">exception </em><code class="sig-prename descclassname">ml_fingerprint.exceptions.</code><code class="sig-name descname">VerificationError</code><a class="reference internal" href="../../_modules/ml_fingerprint/exceptions.html#VerificationError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ml_fingerprint.exceptions.VerificationError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Exception raised when the verification has failed.
+This could be because the signature doesn’t fit the model (i.e. the model
+has been modified since the signature), or because the public key used
+to decrypt the model isn’t the counterpart of the private key used to
+sign it.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ml_fingerprint.ml_fingerprint">
+<span id="ml-fingerprint-ml-fingerprint-module"></span><h2>ml_fingerprint.ml_fingerprint module<a class="headerlink" href="#module-ml_fingerprint.ml_fingerprint" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="ml_fingerprint.ml_fingerprint.decorate_base_estimator">
+<code class="sig-prename descclassname">ml_fingerprint.ml_fingerprint.</code><code class="sig-name descname">decorate_base_estimator</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ml_fingerprint/ml_fingerprint.html#decorate_base_estimator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ml_fingerprint.ml_fingerprint.decorate_base_estimator" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function should be called by the user on their code.
+It adds the sign and verification methods to scikit’s BaseEstimator class, making them avaliable in all scikit’s estimators.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="ml_fingerprint.ml_fingerprint.isInyected">
+<code class="sig-prename descclassname">ml_fingerprint.ml_fingerprint.</code><code class="sig-name descname">isInyected</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ml_fingerprint/ml_fingerprint.html#isInyected"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ml_fingerprint.ml_fingerprint.isInyected" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function used to check if a scikit model has been inyected with ml-fingerprint methods</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>model</strong> (<em>any sklearn estimator</em>) – The scikit-learn model you want to check if is inyected with sign() and verify() methods.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True if the model has been previously inyected, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ml_fingerprint.remote">
+<span id="ml-fingerprint-remote-module"></span><h2>ml_fingerprint.remote module<a class="headerlink" href="#module-ml_fingerprint.remote" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="ml_fingerprint.remote.RemoteServer">
+<em class="property">class </em><code class="sig-prename descclassname">ml_fingerprint.remote.</code><code class="sig-name descname">RemoteServer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">url</span></em>, <em class="sig-param"><span class="n">api_key</span></em>, <em class="sig-param"><span class="n">unsafe_https</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ml_fingerprint/remote.html#RemoteServer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ml_fingerprint.remote.RemoteServer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class that allows to easily manage models from a server.</p>
+<dl class="py attribute">
+<dt id="ml_fingerprint.remote.RemoteServer.url">
+<code class="sig-name descname">url</code><a class="headerlink" href="#ml_fingerprint.remote.RemoteServer.url" title="Permalink to this definition">¶</a></dt>
+<dd><p>URL of the API of the remote server.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ml_fingerprint.remote.RemoteServer.delete_model">
+<code class="sig-name descname">delete_model</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">modelname</span></em>, <em class="sig-param"><span class="n">version</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ml_fingerprint/remote.html#RemoteServer.delete_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ml_fingerprint.remote.RemoteServer.delete_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes a model from the server.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>modelname</strong> (<em>str</em>) – The name of the model to be deleted.</p></li>
+<li><p><strong>version</strong> (<em>str</em><em>, </em><em>optional</em>) – The version of the model to be deleted. If not given, it will delete
+the last version.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Response object returned by the server after the PUT petition.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>requests.Response</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ml_fingerprint.remote.RemoteServer.get_list_models">
+<code class="sig-name descname">get_list_models</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">modelname</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">type_str</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">allversions</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">doprint</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ml_fingerprint/remote.html#RemoteServer.get_list_models"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ml_fingerprint.remote.RemoteServer.get_list_models" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves the list of models from the server, filtering by the given parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>modelname</strong> (<em>str</em><em>, </em><em>optional</em>) – If specified, it will show all versions of that model.</p></li>
+<li><p><strong>type_str</strong> (<em>str</em><em>, </em><em>optional</em>) – If specified, it will filter by that model type.
+If type is “supervised” or “unsupervised”, it will filter by that instead.</p></li>
+<li><p><strong>allversions</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, it will show all versions of all models in the list.
+If False, it will show only the lastest version for each model.</p></li>
+<li><p><strong>doprint</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, pretty prints the list of models.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List containing objects with all the metadata of the models.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ml_fingerprint.remote.RemoteServer.get_model">
+<code class="sig-name descname">get_model</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">modelname</span></em>, <em class="sig-param"><span class="n">public_key</span></em>, <em class="sig-param"><span class="n">version</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ml_fingerprint/remote.html#RemoteServer.get_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ml_fingerprint.remote.RemoteServer.get_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves a model from the server, and verifies its integrity and authenticity
+before returning it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>modelname</strong> (<em>str</em>) – The name of the model to be retrieved.</p></li>
+<li><p><strong>public_key</strong> (<em>Crypto.PublicKey.RSA.RsaKey</em>) – The public key whose private counterpart was used to sign the model.
+This is needed to verify the integrity and authenticity of the model.</p></li>
+<li><p><strong>version</strong> (<em>str</em><em>, </em><em>optional</em>) – The version of the model to be retrieved. If not given, it will retrieve
+the last version.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The received model from the server.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(any sklearn estimator)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ml_fingerprint.remote.RemoteServer.insert_model">
+<code class="sig-name descname">insert_model</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">supervised</span></em>, <em class="sig-param"><span class="n">model_type</span></em>, <em class="sig-param"><span class="n">scores</span></em>, <em class="sig-param"><span class="n">version</span></em>, <em class="sig-param"><span class="n">metadata</span></em>, <em class="sig-param"><span class="n">date</span></em>, <em class="sig-param"><span class="n">description</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ml_fingerprint/remote.html#RemoteServer.insert_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ml_fingerprint.remote.RemoteServer.insert_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes a model and all its metadata, and uploads it to the server.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>any sklearn estimator</em>) – The model to be inserted.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – The name of the model.</p></li>
+<li><p><strong>supervised</strong> (<em>bool</em>) – True if the model belongs to “supervised learning” category.
+False if belongs to “unsupervised learning” category.</p></li>
+<li><p><strong>model_type</strong> (<em>str</em>) – The category of the model (i.e. regression, classification, clustering…).</p></li>
+<li><p><strong>scores</strong> (<em>dict</em>) – Dictionary with the scores of the model, following this syntaxis: {“score_name” : score_value}</p></li>
+<li><p><strong>version</strong> (<em>str</em>) – The version of the model.</p></li>
+<li><p><strong>metadata</strong> (<em>dict</em>) – Dictionary with any additional data you want to store alongside the model.</p></li>
+<li><p><strong>date</strong> (<em>datetime.datetime</em>) – Datetime object with the date and time of the creation of the model (usually datetime.now())</p></li>
+<li><p><strong>description</strong> (<em>str</em>) – Description of the model.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Response object returned by the server after the POST petition.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>requests.Response</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ml_fingerprint.remote.RemoteServer.update_model">
+<code class="sig-name descname">update_model</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">supervised</span></em>, <em class="sig-param"><span class="n">model_type</span></em>, <em class="sig-param"><span class="n">scores</span></em>, <em class="sig-param"><span class="n">version</span></em>, <em class="sig-param"><span class="n">metadata</span></em>, <em class="sig-param"><span class="n">date</span></em>, <em class="sig-param"><span class="n">description</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ml_fingerprint/remote.html#RemoteServer.update_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ml_fingerprint.remote.RemoteServer.update_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes a model that is already present on the server and updates the model itself
+and all its metadata.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This method is NOT intended to upload a new version of the same model.
+In order to do that, use insert_model() instead.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>any sklearn estimator</em>) – The model to be updated.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – The name of the model. Has to be the same as the model to be updated.</p></li>
+<li><p><strong>supervised</strong> (<em>bool</em>) – True if the model belongs to “supervised learning” category.
+False if belongs to “unsupervised learning” category.</p></li>
+<li><p><strong>model_type</strong> (<em>str</em>) – The category of the model (i.e. regression, classification, clustering…).</p></li>
+<li><p><strong>scores</strong> (<em>dict</em>) – Dictionary with the scores of the model, following this syntaxis: {“score_name” : score_value}</p></li>
+<li><p><strong>version</strong> (<em>str</em>) – The version of the model. Has to be the same as the one to be updated.</p></li>
+<li><p><strong>metadata</strong> (<em>dict</em>) – Dictionary with any additional data you want to store alongside the model.</p></li>
+<li><p><strong>date</strong> (<em>datetime.datetime</em>) – Datetime object with the date and time of the creation of the model (usually datetime.now())</p></li>
+<li><p><strong>description</strong> (<em>str</em>) – Description of the model.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Response object returned by the server after the PUT petition.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>requests.Response</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="ml_fingerprint.remote.decode_model">
+<code class="sig-prename descclassname">ml_fingerprint.remote.</code><code class="sig-name descname">decode_model</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ml_fingerprint/remote.html#decode_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ml_fingerprint.remote.decode_model" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="ml_fingerprint.remote.encode_model">
+<code class="sig-prename descclassname">ml_fingerprint.remote.</code><code class="sig-name descname">encode_model</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ml_fingerprint/remote.html#encode_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ml_fingerprint.remote.encode_model" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="ml_fingerprint.remote.put_key_in_db">
+<code class="sig-prename descclassname">ml_fingerprint.remote.</code><code class="sig-name descname">put_key_in_db</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">private_key</span></em>, <em class="sig-param"><span class="n">public_key</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ml_fingerprint/remote.html#put_key_in_db"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ml_fingerprint.remote.put_key_in_db" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-ml_fingerprint">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ml_fingerprint" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Jaime Solsona
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
