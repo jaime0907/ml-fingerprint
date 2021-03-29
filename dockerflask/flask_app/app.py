@@ -40,7 +40,8 @@ def main_page():
 
 @server.route('/login')
 def login():
-    redirect_uri = url_for('auth', _external=True)
+    #redirect_uri = url_for('auth', _external=True)
+    redirect_uri = '/mlfingerprint/auth'
     return oauth.google.authorize_redirect(redirect_uri)
 
 
