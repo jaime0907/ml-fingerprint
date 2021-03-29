@@ -41,7 +41,7 @@ def main_page():
 @server.route('/login')
 def login():
     #redirect_uri = url_for('auth', _external=True)
-    redirect_uri = server.config['SERVER_NAME'] + '/mlfingerprint/auth'
+    redirect_uri = 'https://dslab01.etsit.urjc.es/mlfingerprint/auth'
     return oauth.google.authorize_redirect(redirect_uri)
 
 
@@ -50,12 +50,12 @@ def auth():
     token = oauth.google.authorize_access_token()
     user = oauth.google.parse_id_token(token)
     session['user'] = user
-    return redirect('/')
+    return redirect('/mlfingerprint/')
 
 @server.route('/logout')
 def logout():
     session.pop('user', None)
-    return redirect('/')
+    return redirect('/mlfingerprint/')
     
 
 @server.route('/profile')
